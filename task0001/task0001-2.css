@@ -1,0 +1,8 @@
+.center{
+	width: 960px;
+	background-color: red;
+
+	position: absolute;
+	left: 50%;
+	margin-left: -480px;
+}
