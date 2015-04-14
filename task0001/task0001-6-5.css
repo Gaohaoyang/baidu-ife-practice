@@ -1,0 +1,10 @@
+body{
+	background-color: red;
+}
+div{
+	width: 150px;
+	height: 100px;
+	margin: 10px;
+	float: left;
+	background-color: blue;
+}

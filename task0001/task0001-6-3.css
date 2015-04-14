@@ -1,0 +1,36 @@
+/* .row{
+	position: relative;
+}
+.left{
+	width: 100px;
+	height: 100px;
+	background-color: red;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.right{
+	height: 100px;
+	background-color: blue;
+	margin-left: 100px;
+}
+.bottom{
+	height: 100px;
+	background-color: yellow;
+}  */
+
+.left{
+	width: 100px;
+	height: 100px;
+	background-color: red;
+	float: left;
+}
+.right{
+	height: 100px;
+	background-color: blue;
+	margin-left: 100px;
+}
+.bottom{
+	height: 100px;
+	background-color: yellow;
+}

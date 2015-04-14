@@ -1,0 +1,27 @@
+.bd{
+	/*padding: 0 190px;*/
+}
+.main{
+	float: left;
+	width: 100%;
+	background-color: #aaa;
+}
+.main-wrap{
+	margin:0 190px; 
+}
+.sub{
+	float: left;
+	width: 190px;
+	margin-left: -100%;
+	background-color: blue;
+	/*position: relative;
+	left: -190px;*/
+}
+.extra{
+	float: left;
+	width: 190px;
+	margin-left: -190px;
+	background-color: yellow;
+	/*position: relative;
+	right: -190px;*/
+}
