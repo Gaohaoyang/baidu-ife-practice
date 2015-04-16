@@ -1,0 +1,15 @@
+#my-border-radius{
+	width: 100px;
+	background: url('http://7q5cdt.com1.z0.glb.clouddn.com/Baidu-Front-end-task0001_7.png') 0 0 no-repeat;
+}
+#my-border-radius .left{
+	background: url('http://7q5cdt.com1.z0.glb.clouddn.com/Baidu-Front-end-task0001_7.png') 0 0 no-repeat;
+}
+#my-border-radius .right{
+	background: url('http://7q5cdt.com1.z0.glb.clouddn.com/Baidu-Front-end-task0001_7.png') 0 0 no-repeat;
+}
+
+
+.btn{width:100px;background:url(img/btn.png) repeat-x;}
+.btnL{background:url(img/btnL.png) no-repeat;}
+.btnR{height:31px; background:url(img/btnR.png) no-repeat right 0;}
