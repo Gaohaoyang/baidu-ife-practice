@@ -1,0 +1,22 @@
+.row {
+    border: 1px solid red;
+}
+.left {
+    width: 200px;
+    float: left;
+    background-color: #eee;
+}
+.right {
+    width: 200px;
+    float: right;
+    background-color: #eee;
+}
+.row2 {
+    width: 600px;
+    height: 50px;
+    background-color: #aaa;
+}
+.clearfix{
+    overflow: auto;
+    zoom: 1;
+}

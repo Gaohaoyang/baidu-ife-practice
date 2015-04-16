@@ -1,0 +1,19 @@
+/* 使用inline-block不能做出要求的效果 */
+.left{
+    width: 100px;
+    height: 100px;
+    display: inline-block;
+    background-color: red;
+    /* float: left; */
+}
+.right{
+    width: auto;
+    height: 100px;
+    display: inline-block;
+    background-color: blue;
+    /*margin-left: 100px;*/
+}
+.bottom{
+    height: 100px;
+    background-color: yellow;
+}
