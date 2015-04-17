@@ -1,0 +1,16 @@
+
+.left{
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    float: left;
+}
+.right{
+    height: 100px;
+    background-color: yellow;
+    overflow: hidden;
+}
+.bottom{
+    height: 100px;
+    background-color: red;
+}

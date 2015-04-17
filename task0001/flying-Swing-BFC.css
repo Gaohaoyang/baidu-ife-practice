@@ -1,0 +1,14 @@
+.left{
+    width: 100px;
+    background-color: red;
+    float: left;
+}
+.right{
+    width: 200px;
+    background-color: blue;
+    float: right;
+}
+.main{
+    background-color: #eee;
+    overflow: hidden;
+}
