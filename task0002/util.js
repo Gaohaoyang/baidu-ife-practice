@@ -27,10 +27,22 @@ Array.isArray({});
 // 被复制的对象类型会被限制为数字、字符串、布尔、日期、数组、Object对象。不会包含函数、正则对象等
 function cloneObject(src) {
     // your implement
-    var resultObj = {};
-    for(var i in src){  //遍历这个对象
-
+    var o; //result
+    if (Object.prototype.toString.call(src) === "[object Array]") {
+        o = []; //判断是否是数组，并赋初始值
+    } else {
+        o = {};
     }
+    for (var i in src) { //遍历这个对象
+        if (src.hasOwnProperty(i)) { //排出继承属性
+            if (typeof src[i] === "object") {
+                o[i] = cloneObject(src[i]); //递归赋值
+            } else {
+                o[i] = src[i]; //直接赋值
+            }
+        }
+    }
+    return o;
 }
 
 // 测试用例：
@@ -53,8 +65,8 @@ srcObj.b.b1[0] = "Hello";
 console.log(abObj.a);
 console.log(abObj.b.b1[0]);
 
-// console.log(tarObj.a);      // 1
-// console.log(tarObj.b.b1[0]);    // "hello"
+console.log(tarObj.a); // 1
+console.log(tarObj.b.b1[0]); // "hello"
 
 console.log(srcObj.b);
 
@@ -71,7 +83,7 @@ function showProps(obj, objName) {
 function showPropsWithoutFun(obj, objName) {
     var result = "";
     for (var i in obj) {
-        if (!obj.hasOwnProperty(i)) {       //跳过继承属性
+        if (!obj.hasOwnProperty(i)) { //跳过继承属性
             continue;
         }
         if (typeof obj[i] === "function") { //跳过这个对象的方法
@@ -84,4 +96,4 @@ function showPropsWithoutFun(obj, objName) {
 
 console.log(showProps(srcObj, 'srcObj'));
 console.log(showPropsWithoutFun(srcObj, 'srcObj'));
-// console.log('prototype'+srcObj.prototype.toString.call(Object));    
+// console.log('prototype'+srcObj.prototype.toString.call(Object));
