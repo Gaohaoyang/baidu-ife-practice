@@ -11,7 +11,7 @@ function isFunction(fn) {
     return typeof fn === "function";
 }
 
-
+//--------------------------------------------------
 // 使用递归来实现一个深度克隆，可以复制一个目标对象，返回一个完整拷贝
 // 被复制的对象类型会被限制为数字、字符串、布尔、日期、数组、Object对象。不会包含函数、正则对象等
 function cloneObject(src) {
@@ -54,7 +54,7 @@ console.log(abObj.b.b1[0]);
 console.log(tarObj.a); // 1
 console.log(tarObj.b.b1[0]); // "hello"
 
-
+//--------------------------------------------------------------
 // 对数组进行去重操作，只考虑数组中元素为数字或字符串，返回一个去重后的数组
 function uniqArray(arr) {
     var newArr = []; //创建空数组
@@ -69,8 +69,6 @@ function uniqArray(arr) {
 var a = [1, 3, 5, 7, 5, 3];
 var b = uniqArray(a);
 console.log(b); // [1, 3, 5, 7]
-
-
 
 // 中级班同学跳过此题
 // 实现一个简单的trim函数，用于去除一个字符串，头部和尾部的空白字符
@@ -147,6 +145,7 @@ var obj = {
 };
 console.log(getObjectLength(obj)); // 3
 
+//---------------------------------------------------------
 // 判断是否为邮箱地址
 function isEmail(emailStr) {
     var pattern = /^(\w+\.)*\w+@\w+(\.\w+)+$/;
@@ -159,5 +158,42 @@ function isMobilePhone(phone) {
     return pattern.test(phone);
 }
 
-console.log('isEmail------>'+isEmail('gaohaoyang126@126.com'));
-console.log('phone------>'+isMobilePhone('+8612341234'));
+console.log('isEmail------>' + isEmail('gaohaoyang126@126.com'));
+console.log('phone------>' + isMobilePhone('+8612341234'));
+
+//-----------------------------------------------------------
+// 为element增加一个样式名为newClassName的新样式
+function addClass(element, newClassName) {
+    var oldClassName = element.className; //获取旧的样式类
+    element.className = oldClassName === "" ? newClassName : oldClassName + " " + newClassName;
+}
+
+// 移除element中的样式oldClassName
+function removeClass(element, oldClassName) {
+    var originClassName = element.className; //获取原先的样式类
+    var pattern = new RegExp("\\b" + oldClassName + "\\b"); //使用构造函数构造动态的正则表达式
+    element.className = originClassName.replace(pattern, '');
+}
+
+// 判断siblingNode和element是否为同一个父元素下的同一级的元素，返回bool值
+function isSiblingNode(element, siblingNode) {
+    // your implement
+}
+
+// 获取element相对于浏览器窗口的位置，返回一个对象{x, y}
+function getPosition(element) {
+    // your implement
+}
+
+/**
+ * test
+ * 测试增加样式
+ */
+var oDiv1 = document.getElementById('div1');
+// console.log("oDiv1.getAttribute('class')----->"+oDiv1.getAttribute("class"));
+console.log("oDiv1.className---->" + oDiv1.className);
+// oDiv1.className = 'class1';
+addClass(oDiv1, 'class2');
+console.log("oDiv1.className---->" + oDiv1.className);
+removeClass(oDiv1, 'class2');
+console.log("oDiv1.className---->" + oDiv1.className);
