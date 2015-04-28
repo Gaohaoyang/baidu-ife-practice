@@ -149,10 +149,15 @@ console.log(getObjectLength(obj)); // 3
 
 // 判断是否为邮箱地址
 function isEmail(emailStr) {
-    var pattern = 
+    var pattern = /^(\w+\.)*\w+@\w+(\.\w+)+$/;
+    return pattern.test(emailStr);
 }
 
 // 判断是否为手机号
 function isMobilePhone(phone) {
-    // your implement
+    var pattern = /^(\+\d{1,4})?\d{7,11}$/;
+    return pattern.test(phone);
 }
+
+console.log('isEmail------>'+isEmail('gaohaoyang126@126.com'));
+console.log('phone------>'+isMobilePhone('+8612341234'));
