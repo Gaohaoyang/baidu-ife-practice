@@ -149,7 +149,7 @@ console.log(getObjectLength(obj)); // 3
 
 // 判断是否为邮箱地址
 function isEmail(emailStr) {
-    // your implement
+    var pattern = 
 }
 
 // 判断是否为手机号
