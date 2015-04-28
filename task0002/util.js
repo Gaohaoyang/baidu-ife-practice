@@ -177,12 +177,19 @@ function removeClass(element, oldClassName) {
 
 // 判断siblingNode和element是否为同一个父元素下的同一级的元素，返回bool值
 function isSiblingNode(element, siblingNode) {
-    // your implement
+    return element.parentNode === siblingNode.parentNode;
 }
 
 // 获取element相对于浏览器窗口的位置，返回一个对象{x, y}
 function getPosition(element) {
-    // your implement
+    var pos={};
+    var oBody = document.getElementsByTagName('body')[0];
+    if(element.offsetParent === oBody){
+        ex = element.offsetLeft;
+        ey = element.offsetTop;
+    }else{
+        
+    }
 }
 
 /**
@@ -197,3 +204,16 @@ addClass(oDiv1, 'class2');
 console.log("oDiv1.className---->" + oDiv1.className);
 removeClass(oDiv1, 'class2');
 console.log("oDiv1.className---->" + oDiv1.className);
+
+var oDiv2 = document.getElementById('div2');
+console.log(isSiblingNode(oDiv1,oDiv2));
+var oH1 = document.getElementById('h');
+console.log(isSiblingNode(oDiv1,oH1));
+
+var oGrand = document.getElementById('grand');
+var oBody = document.getElementsByTagName('body')[0];
+console.log(oH1.offsetParent);
+console.log(oDiv2.offsetParent);
+console.log(oGrand.offsetParent===oBody);
+console.log(oH1.offsetTop);
+console.log(oBody);
