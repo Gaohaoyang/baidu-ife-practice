@@ -22,3 +22,5 @@ function initEvent() {
 }
 
 initEvent();
+
+console.log(document.body.scrollTop);

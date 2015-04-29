@@ -158,8 +158,12 @@ function isMobilePhone(phone) {
     return pattern.test(phone);
 }
 
+/*
+ * test
+ */
 console.log('isEmail------>' + isEmail('gaohaoyang126@126.com'));
 console.log('phone------>' + isMobilePhone('+8612341234'));
+/*---------test over-----------*/
 
 //-----------------------------------------------------------
 // 为element增加一个样式名为newClassName的新样式
@@ -182,14 +186,10 @@ function isSiblingNode(element, siblingNode) {
 
 // 获取element相对于浏览器窗口的位置，返回一个对象{x, y}
 function getPosition(element) {
-    var pos={};
-    var oBody = document.getElementsByTagName('body')[0];
-    if(element.offsetParent === oBody){
-        ex = element.offsetLeft;
-        ey = element.offsetTop;
-    }else{
-        
-    }
+    var pos = {};
+    pos.x = element.getBoundingClientRect().left + Math.max(document.documentElement.scrollLeft, document.body.scrollLeft);
+    pos.y = element.getBoundingClientRect().top + Math.max(document.documentElement.scrollTop, document.body.scrollTop);
+    return pos;
 }
 
 /**
@@ -206,14 +206,32 @@ removeClass(oDiv1, 'class2');
 console.log("oDiv1.className---->" + oDiv1.className);
 
 var oDiv2 = document.getElementById('div2');
-console.log(isSiblingNode(oDiv1,oDiv2));
+console.log(isSiblingNode(oDiv1, oDiv2));
 var oH1 = document.getElementById('h');
-console.log(isSiblingNode(oDiv1,oH1));
+console.log(isSiblingNode(oDiv1, document.getElementById('grand')));
 
-var oGrand = document.getElementById('grand');
-var oBody = document.getElementsByTagName('body')[0];
-console.log(oH1.offsetParent);
-console.log(oDiv2.offsetParent);
-console.log(oGrand.offsetParent===oBody);
-console.log(oH1.offsetTop);
-console.log(oBody);
+console.log(getPosition(oH1));
+/*-----test over------*/
+
+//---------------------------------------------------------
+// 实现一个简单的Query
+function $(selector) {
+
+}
+
+// 可以通过id获取DOM对象，通过#标示，例如
+$("#adom"); // 返回id为adom的DOM对象
+
+// 可以通过tagName获取DOM对象，例如
+$("a"); // 返回第一个<a>对象
+
+// 可以通过样式名称获取DOM对象，例如
+$(".classa"); // 返回第一个样式定义包含classa的对象
+
+// 可以通过attribute匹配获取DOM对象，例如
+$("[data-log]"); // 返回第一个包含属性data-log的对象
+
+$("[data-time=2015]"); // 返回第一个包含属性data-time且值为2015的对象
+
+// 可以通过简单的组合提高查询便利性，例如
+$("#adom .classa"); // 返回id为adom的DOM所包含的所有子节点中，第一个样式定义包含classa的对象
