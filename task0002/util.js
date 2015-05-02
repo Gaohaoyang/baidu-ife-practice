@@ -35,7 +35,7 @@ function cloneObject(src) {
 }
 
 // 测试用例：
-var srcObj = {
+/*var srcObj = {
     a: 1,
     b: {
         b1: ["hello", "hi"],
@@ -52,7 +52,7 @@ console.log(abObj.a);
 console.log(abObj.b.b1[0]);
 
 console.log(tarObj.a); // 1
-console.log(tarObj.b.b1[0]); // "hello"
+console.log(tarObj.b.b1[0]); // "hello"*/
 
 //--------------------------------------------------------------
 // 对数组进行去重操作，只考虑数组中元素为数字或字符串，返回一个去重后的数组
@@ -66,9 +66,9 @@ function uniqArray(arr) {
     return newArr;
 }
 // 使用示例
-var a = [1, 3, 5, 7, 5, 3];
+/*var a = [1, 3, 5, 7, 5, 3];
 var b = uniqArray(a);
-console.log(b); // [1, 3, 5, 7]
+console.log(b); // [1, 3, 5, 7]*/
 
 // 中级班同学跳过此题
 // 实现一个简单的trim函数，用于去除一个字符串，头部和尾部的空白字符
@@ -99,10 +99,10 @@ function trim(str) {
 }
 
 // 使用示例
-var str = '   hi! World!  ';
+/*var str = '   hi! World!  ';
 console.log("simpleTrim--->" + simpleTrim(str));
 str = trim(str);
-console.log("trim--->" + str); // 'hi!'
+console.log("trim--->" + str); // 'hi!'*/
 
 // 实现一个遍历数组的方法，针对数组中每一个元素执行fn函数，并将数组索引和元素作为参数传递
 function each(arr, fn) {
@@ -114,7 +114,7 @@ function each(arr, fn) {
 // 其中fn函数可以接受两个参数：item和index
 
 // 使用示例
-var arr = ['java', 'c', 'php', 'html'];
+/*var arr = ['java', 'c', 'php', 'html'];
 
 function output1(item) {
     console.log(item);
@@ -127,7 +127,7 @@ var arr = ['java', 'c', 'php', 'html'];
 function output(item, index) {
     console.log(index + ': ' + item);
 }
-each(arr, output); // 0:java, 1:c, 2:php, 3:html
+each(arr, output); // 0:java, 1:c, 2:php, 3:html*/
 
 // 获取一个对象里面第一层元素的数量，返回一个整数
 function getObjectLength(obj) {
@@ -135,7 +135,7 @@ function getObjectLength(obj) {
 }
 
 // 使用示例
-var obj = {
+/*var obj = {
     a: 1,
     b: 2,
     c: {
@@ -143,7 +143,7 @@ var obj = {
         c2: 4
     }
 };
-console.log(getObjectLength(obj)); // 3
+console.log(getObjectLength(obj)); // 3*/
 
 //---------------------------------------------------------
 // 判断是否为邮箱地址
@@ -161,8 +161,8 @@ function isMobilePhone(phone) {
 /*
  * test
  */
-console.log('isEmail------>' + isEmail('gaohaoyang126@126.com'));
-console.log('phone------>' + isMobilePhone('+8612341234'));
+/*console.log('isEmail------>' + isEmail('gaohaoyang126@126.com'));
+console.log('phone------>' + isMobilePhone('+8612341234'));*/
 /*---------test over-----------*/
 
 //-----------------------------------------------------------
@@ -176,7 +176,7 @@ function addClass(element, newClassName) {
 function removeClass(element, oldClassName) {
     var originClassName = element.className; //获取原先的样式类
     var pattern = new RegExp("\\b" + oldClassName + "\\b"); //使用构造函数构造动态的正则表达式
-    element.className = originClassName.replace(pattern, '');
+    element.className = originClassName.replace(pattern, '').trim();
 }
 
 // 判断siblingNode和element是否为同一个父元素下的同一级的元素，返回bool值
@@ -196,7 +196,7 @@ function getPosition(element) {
  * test
  * 测试增加样式
  */
-var oDiv1 = document.getElementById('div1');
+/*var oDiv1 = document.getElementById('div1');
 // console.log("oDiv1.getAttribute('class')----->"+oDiv1.getAttribute("class"));
 console.log("oDiv1.className---->" + oDiv1.className);
 // oDiv1.className = 'class1';
@@ -210,28 +210,86 @@ console.log(isSiblingNode(oDiv1, oDiv2));
 var oH1 = document.getElementById('h');
 console.log(isSiblingNode(oDiv1, document.getElementById('grand')));
 
-console.log(getPosition(oH1));
+console.log(getPosition(oH1));*/
 /*-----test over------*/
 
 //---------------------------------------------------------
 // 实现一个简单的Query
 function $(selector) {
 
+    if (!selector) {
+        return null;
+    }
+
+    if (selector == document) {
+        return document;
+    }
+
+    selector = selector.trim();
+    if (selector.indexOf(" ") !== -1) { //若存在空格
+        var selectorArr = selector.split(/\s+/); //拆成数组
+        //待解决/////////////////////////////////////
+    } else { //只有一个，直接查询
+        var signal = selector[0];
+        var allElements = null;
+        console.log("signal--->" + signal);
+        switch (signal) {
+            case "#":
+                console.log("case#");
+                return document.getElementById(selector.substr(1));
+            case ".":
+                console.log("case.");
+                allElements = document.getElementsByTagName("*");
+                for (var i = 0; i < allElements.length; i++) {
+                    if (allElements[i].getAttribute("class") !== null && allElements[i].getAttribute("class").search(selector.substr(1)) != -1) {
+                        console.log("in");
+                        return allElements[i];
+                    }
+                }
+                break;
+            case "[":
+                console.log("case[");
+                if(selector.substr(1).search("=") == -1){
+                    console.log("no ==");
+                    allElements = document.getElementsByTagName("*");
+                    for (i = 0; i < allElements.length; i++) {
+                    if (allElements[i].getAttribute(selector.slice(1,-1)) !== null) {
+                        console.log("in");
+                        return allElements[i];
+                    }
+                }
+
+                }else{
+                    console.log("===");
+                }
+
+
+                break;
+            default:
+                console.log("error");
+                break;
+        }
+    }
 }
 
 // 可以通过id获取DOM对象，通过#标示，例如
-$("#adom"); // 返回id为adom的DOM对象
+// 返回id为adom的DOM对象
+//console.log($("#div1").getAttribute("class").search("class2")!=-1);
+// console.log($(".gao"));
+// $(".class1").innerHTML = "testttttclasssssssssss";
 
 // 可以通过tagName获取DOM对象，例如
-$("a"); // 返回第一个<a>对象
+// $("a"); // 返回第一个<a>对象
 
-// 可以通过样式名称获取DOM对象，例如
-$(".classa"); // 返回第一个样式定义包含classa的对象
+// // 可以通过样式名称获取DOM对象，例如
+// $(".classa"); // 返回第一个样式定义包含classa的对象
 
-// 可以通过attribute匹配获取DOM对象，例如
-$("[data-log]"); // 返回第一个包含属性data-log的对象
+// // 可以通过attribute匹配获取DOM对象，例如
+//$("[data-log]"); // 返回第一个包含属性data-log的对象
 
-$("[data-time=2015]"); // 返回第一个包含属性data-time且值为2015的对象
+$("[date]").innerHTML = "date1111";
 
-// 可以通过简单的组合提高查询便利性，例如
-$("#adom .classa"); // 返回id为adom的DOM所包含的所有子节点中，第一个样式定义包含classa的对象
+// $("[data-time=2015]"); // 返回第一个包含属性data-time且值为2015的对象
+
+// // 可以通过简单的组合提高查询便利性，例如
+// $("#adom .classa"); // 返回id为adom的DOM所包含的所有子节点中，第一个样式定义包含classa的对象
