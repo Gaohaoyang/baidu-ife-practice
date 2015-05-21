@@ -1,13 +1,14 @@
-# 百度Web前端技术学院
+# 关于这个仓库
 
-## 学院介绍
+这里是用来存放我在做百度前端任务的练习代码。没什么实用价值。
 
-**百度Web前端技术学院**（Baidu Institute of Front-End Technology简称IFE）是一个由百度EFE团队、百度人力资源部校园招聘组联合出品的、面向在校大学生的前端培训组织，我们希望能够借助百度大量优秀的前端工程师以及丰富的前端知识积累，帮助大学生们更加高效、系统地学习Web前端技术。
+关于百度前端学院的详情请点击这里：[https://github.com/baidu-ife/ife](https://github.com/baidu-ife/ife)
 
-## 学院主页
+---
 
-[https://github.com/baidu-ife/ife](https://github.com/baidu-ife/ife)
+## 说明
 
-## About
+现在这个仓库基本废弃了。想看我做的任务代码请移步至：
 
-这个仓库用来存放我在百度Web前端技术学院学习期间做的所有任务。
+* [task0001](https://github.com/Gaohaoyang/ife/tree/master/task/task0001/work/Gaohaoyang)
+* [task0002](https://github.com/Gaohaoyang/ife/tree/master/task/task0002/work/Gaohaoyang)
