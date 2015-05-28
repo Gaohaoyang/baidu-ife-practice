@@ -189,7 +189,7 @@ function addChildCate(pid, name) {
         localStorage.childCate = JSON.stringify(childCateJsonTemp);
 
         //同时将父分类中的 child 添加数字
-        updateCateChild(pid,newChildCate.id);
+        updateCateChild(pid, newChildCate.id);
 
     }
 }
@@ -299,4 +299,10 @@ function clickCate(element) {
  */
 function clickAddCate() {
     console.log("=========clickAddCate===========");
+    var cover = $(".cover");
+    cover.style.display = "block";
+    // addClickEvent(cover, function() {
+    //     cover.style.display = "none";
+    // });
+    
 }

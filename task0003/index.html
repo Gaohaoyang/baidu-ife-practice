@@ -17,21 +17,21 @@
                 </div>
                 <div class="list-title">分类列表</div>
                 <div id="listcontent" class="list">
-                   <ul>
-                       <li>
-                       <h2 class="active"><i class="fa fa-folder-open"></i><span>百度IFE项目</span> (2)<i class="fa fa-trash-o"></i>
-                       </h2>
-                           <ul>
-                               <li>
-                                   <h3><i class="fa fa-file-o"></i><span>task1</span> (2)<i class="fa fa-trash-o"></i></h3>
-                               </li>
-                               <li>
-                                   <h3 class="active"><i class="fa fa-file-o"></i><span>task2</span> (2)<i class="fa fa-trash-o"></i></h3>
-                               </li>
-                           </ul>
-                       </li>
-                       <li><h2><i class="fa fa-folder-open"></i><span>默认分类</span> (0)<i class="fa fa-trash-o"></i></h2></li>
-                   </ul>
+                    <ul>
+                        <li>
+                            <h2 class="active"><i class="fa fa-folder-open"></i><span>百度IFE项目</span> (2)<i class="fa fa-trash-o"></i>
+                            </h2>
+                            <ul>
+                                <li>
+                                    <h3><i class="fa fa-file-o"></i><span>task1</span> (2)<i class="fa fa-trash-o"></i></h3>
+                                </li>
+                                <li>
+                                    <h3 class="active"><i class="fa fa-file-o"></i><span>task2</span> (2)<i class="fa fa-trash-o"></i></h3>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><h2><i class="fa fa-folder-open"></i><span>默认分类</span> (0)<i class="fa fa-trash-o"></i></h2></li>
+                    </ul>
                 </div>
                 <button class="add" onclick="clickAddCate()"><i class="fa fa-plus"></i>新增分类</button>
             </div>
@@ -70,13 +70,28 @@
                     finish task 3
                 </div>
             </div>
-    </div>
-
-    <div class="modal">
-        modal
-    </div>
-
-    <script src="js/util.js"></script>
-    <script src="js/todo.js"></script>
-</body>
+        </div>
+        <div class="cover">
+            <div class="modal">
+                <div class="modal-head">
+                    新增分类
+                </div>
+                <div class="modal-body">
+                    选择主分类：<select>
+                        <option value="volvo">Volvo</option>
+                        <option value="saab">Saab</option>
+                        <option value="fiat">Fiat</option>
+                        <option value="audi">Audi</option>
+                    </select><br>
+                    新分类名称：<input type="text">
+                </div>
+                <div class="modal-foot">
+                    <button>取消</button>
+                    <button>确认</button>
+                </div>
+            </div>
+        </div>
+        <script src="js/util.js"></script>
+        <script src="js/todo.js"></script>
+    </body>
 </html>

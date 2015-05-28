@@ -20,7 +20,7 @@ h2,h3{
 }
 
 /**
- * commen
+ * common
  */
 body, button {
     font-family: 'Microsoft YaHei', 'SimHei', 'STHeiti', sans-serif;
@@ -28,6 +28,10 @@ body, button {
 body{
     min-width: 700px;
     min-height: 400px;
+}
+select, input{
+    border: none;
+    outline: none;
 }
 /**
  * header
@@ -251,12 +255,24 @@ h1 {
 /**
  * ================modal==============
  */
+.cover{
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /*background-color: rgba(39,37,114,0.4);*/
+    background-color: rgba(0,0,0,0.6);
+    z-index: 99;
+}
 .modal{
-    width: 300px;
-    height: 200px;
+    width: 320px;
+    height: 180px;
+    padding: 15px;
     background-color: #eee;
-    margin-left: -150px;
-    margin-top: -100px;
+    margin-left: -160px;
+    margin-top: -90px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -265,4 +281,49 @@ h1 {
     -moz-box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
     -o-box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+.modal-head{
+    font-size: 22px;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+}
+.modal-body{
+    /*background-color: #aaa;*/
+    margin-top: 6px;
+    padding-top: 10px;
+    padding-left: 30px;
+    line-height: 2.2;
+    border-top: 1px dashed #C6CAE0;
+}
+.modal-body select, .modal-body input{
+    width: 160px;
+    height: 26px;
+    padding-left: 5px;
+    border: 1px solid #C6CAE0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.modal-foot{
+    text-align: right;
+    padding-top: 14px;
+    padding-right: 20px;
+}
+.modal-foot button{
+    background-color: #D8D8D8;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 5px 20px;
+    margin-left: 10px;
+
+     transition: 0.2s ease;
+    -webkit-transition: 0.2s ease;
+    -moz-transition: 0.2s ease;
+    -o-transition: 0.2s ease;
+}
+.modal-foot button:hover{
+    background-color: #A8AAC5;
+    color: #fff;
 }
