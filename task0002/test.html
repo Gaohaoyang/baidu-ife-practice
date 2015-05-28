@@ -1,0 +1,95 @@
+<!DOCTYPEhtml>
+<html>
+<head>
+<title>去掉offset</title>
+    
+<meta http-equiv="keywords"content="keyword1,keyword2,keyword3">
+<meta http-equiv="description"content="this is my page">
+<meta http-equiv="content-type"content="text/html; charset=UTF-8">
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+<style type="text/css">
+        div {
+            width: 200px;
+            height: 200px;
+            background-color: silver;
+            margin: 20px;
+            float: left;
+            border: 10px solid black;
+            font-size: 14px;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function() {
+            var oDiv1 = document.getElementById("div1");
+            var oDiv2 = document.getElementById("div2");
+            var oDiv3 = document.getElementById("div3");
+            var oDiv4 = document.getElementById("div4");
+            
+            oDiv1.onmouseover = function() {
+                startMove(this,"height",400);
+            };
+            oDiv1.onmouseout = function() {
+                startMove(this,"height",200);
+            };
+            
+            oDiv2.onmouseover = function() {
+                startMove(this,"width",400);
+            };
+            oDiv2.onmouseout = function() {
+                startMove(this,"width",200);
+            };
+            
+            oDiv3.onmouseover = function() {
+                startMove(this,"fontSize",50);
+            };
+            oDiv3.onmouseout = function() {
+                startMove(this,"fontSize",14);
+            };
+            
+            oDiv4.onmouseover = function() {
+                startMove(this,"borderWidth",100);
+            };
+            oDiv4.onmouseout = function() {
+                startMove(this,"borderWidth",10);
+            };
+        };
+        
+        //获取非行间样式
+        function getStyle(obj,name) {
+            if (obj.currentStyle) { //IE
+                return obj.currentStyle[name];
+            } else {                //FF,Chrome
+                return getComputedStyle(obj,false)[name];
+            }
+        }
+        
+        //运动框架
+        function startMove(obj , attr , iTarget) {
+            clearInterval(obj.timer);
+            
+            obj.timer = setInterval(function() {
+                var cur = parseInt(getStyle(obj, attr));//存入变量,attr为要运动的属性
+                var speed = (iTarget - cur)/6;
+                
+                //速度取整
+                speed = speed>0 ? Math.ceil(speed) : Math.floor(speed);
+                
+                if (cur == iTarget) {
+                    clearInterval(obj.timer);
+                } else {
+                    obj.style[attr] = cur + speed + "px";
+                }
+            }, 30);
+        }
+    </script>
+    
+</head>
+
+<body>
+<div id="div1">变高</div>
+<div id="div2">变宽</div>
+<div id="div3">改变字的大小！hello world</div>
+<div id="div4">div4</div>
+</body>
+</html>
