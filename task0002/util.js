@@ -228,49 +228,58 @@ function $(selector) {
     selector = selector.trim();
     if (selector.indexOf(" ") !== -1) { //若存在空格
         var selectorArr = selector.split(/\s+/); //拆成数组
-        //待解决/////////////////////////////////////
+        //多个选择器有点难到我了，看了一些资料觉得思路应该如下：
+        //1.如果存在#，直接从#开始向后查
+        //2.如果存在tag直接找到所有的tag然后向后查
+        //3.样式类，属性，从后向前查，得到它所有的父节点名称，去筛选匹配
+        
     } else { //只有一个，直接查询
-        var signal = selector[0];
+        var signal = selector[0]; //
         var allElements = null;
-        console.log("signal--->" + signal);
+        var i = null;
+        var content = selector.substr(1);
+        var currAttr = null;
         switch (signal) {
             case "#":
-                console.log("case#");
-                return document.getElementById(selector.substr(1));
+                return document.getElementById(content);
             case ".":
-                console.log("case.");
                 allElements = document.getElementsByTagName("*");
-                for (var i = 0; i < allElements.length; i++) {
-                    if (allElements[i].getAttribute("class") !== null && allElements[i].getAttribute("class").search(selector.substr(1)) != -1) {
-                        console.log("in");
+                for (i = 0; i < allElements.length; i++) {
+                    currAttr = allElements[i].getAttribute("class");
+                    if (currAttr !== null && currAttr.search(content) != -1) {
                         return allElements[i];
                     }
                 }
                 break;
-            case "[":
-                console.log("case[");
-                if(selector.substr(1).search("=") == -1){
-                    console.log("no ==");
+            case "[": //属性选择
+                if (content.search("=") == -1) { //只有属性，没有值
                     allElements = document.getElementsByTagName("*");
                     for (i = 0; i < allElements.length; i++) {
-                    if (allElements[i].getAttribute(selector.slice(1,-1)) !== null) {
-                        console.log("in");
-                        return allElements[i];
+                        if (allElements[i].getAttribute(selector.slice(1, -1)) !== null) {
+                            return allElements[i];
+                        }
+                    }
+                } else { //既有属性，又有值
+                    allElements = document.getElementsByTagName("*");
+                    var pattern = /\[(\w+)\s*\=\s*(\w+)\]/;
+                    var result = selector.match(pattern);
+                    var key = result[1];
+                    var value = result[2];
+                    for (i = 0; i < allElements.length; i++) {
+                        if (allElements[i].getAttribute(key) == value) {
+                            return allElements[i];
+                        }
                     }
                 }
-
-                }else{
-                    console.log("===");
-                }
-
-
                 break;
-            default:
-                console.log("error");
-                break;
+            default: //tag
+                console.log("in");
+                return document.getElementsByTagName(selector)[0];
         }
     }
 }
+
+console.log($("#div1").getElementsByTagName('div'));
 
 // 可以通过id获取DOM对象，通过#标示，例如
 // 返回id为adom的DOM对象
@@ -287,7 +296,15 @@ function $(selector) {
 // // 可以通过attribute匹配获取DOM对象，例如
 //$("[data-log]"); // 返回第一个包含属性data-log的对象
 
-$("[date]").innerHTML = "date1111";
+// $("[date]").innerHTML = "date1111";
+// $("[person=gaohaoyang]").innerHTML = "gaohaoyang";
+// $("[gaohaoyang=gaohaoyang]").innerHTML = "h2 gaohaoyang";
+
+// $("[person=gaohaoyang]").innerHTML = "attr";
+// var pattern = /\[(\w+)\=(\w+)\]/;
+// var result = "[person=gaohaoyang]".match(pattern);
+// console.log("key---->" + result[1]);
+// console.log("value--->" + result[2]);
 
 // $("[data-time=2015]"); // 返回第一个包含属性data-time且值为2015的对象
 
