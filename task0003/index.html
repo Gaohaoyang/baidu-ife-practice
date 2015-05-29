@@ -77,17 +77,14 @@
                     新增分类
                 </div>
                 <div class="modal-body">
-                    选择主分类：<select>
+                    选择主分类：<select id="modal-select">
                         <option value="volvo">Volvo</option>
-                        <option value="saab">Saab</option>
-                        <option value="fiat">Fiat</option>
-                        <option value="audi">Audi</option>
                     </select><br>
-                    新分类名称：<input type="text">
+                    新分类名称：<input id="newCateName" type="text">
                 </div>
                 <div class="modal-foot">
-                    <button>取消</button>
-                    <button>确认</button>
+                    <button onclick="cancel()">取消</button>
+                    <button onclick="ok()">确认</button>
                 </div>
             </div>
         </div>

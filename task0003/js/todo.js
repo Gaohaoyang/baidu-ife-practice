@@ -3,7 +3,7 @@ initAll();
 function initAll() {
     initDataBase(); //初始化数据表
     initCates(); //初始化分类
-
+    initModal(); //初始化模态框
     listAllStorage();
     // addChildCate(1, "fuck");
     // listAllStorage();
@@ -107,6 +107,42 @@ function queryCateById(id) {
         }
     }
 }
+
+/**
+ * 根据主分类 id 查询任务个数 暂时无用
+ * @param  {number} id 主分类 id
+ * @return {number}    任务个数
+ */
+function queryTasksLengthByCateId(id) {
+    var cate = queryCateById(id);
+    var result = 0;
+    if (cate.child.length !== 0) {
+        for (var i = 0; i < cate.child.length; i++) {
+            var childCate = queryChildCatesById(cate.child[i]);
+            result += childCate.child.length;
+        }
+    }
+    return result;
+}
+
+/**
+ * 根据主分类查询任务个数
+ * @param  {Object} cateObject 主分类对象
+ * @return {number}            任务个数
+ */
+function queryTasksLengthByCate(cateObject) {
+    var result = 0;
+    if (cateObject.child.length !== 0) {
+        for (var i = 0; i < cateObject.child.length; i++) {
+            var childCate = queryChildCatesById(cateObject.child[i]);
+            result += childCate.child.length;
+        }
+    }
+    return result;
+}
+// console.log(queryTasksLengthByCateId(0));
+// console.log(queryTasksLengthByCateId(1));
+// console.log(queryTasksLengthByCateId(2));
 // console.log(queryCateById(1));
 /**
  * 根据 id 查找子分类
@@ -247,12 +283,12 @@ function initCates() {
         var liStr = "";
         if (cate[i].child.length === 0) {
             if (i === 0) {
-                liStr = '<li><h2 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + cate[i].child.length + ')</h2></li>';
+                liStr = '<li><h2 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')</h2></li>';
             } else {
-                liStr = '<li><h2 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + cate[i].child.length + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2></li>';
+                liStr = '<li><h2 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2></li>';
             }
         } else {
-            liStr = '<li><h2 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + cate[i].child.length + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2><ul>';
+            liStr = '<li><h2 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2><ul>';
             var childCateArr = queryChildCatesByIdArray(cate[i].child);
             for (var j = 0; j < childCateArr.length; j++) {
                 var innerLiStr = "";
@@ -304,5 +340,38 @@ function clickAddCate() {
     // addClickEvent(cover, function() {
     //     cover.style.display = "none";
     // });
-    
+
+}
+
+function initModal() {
+    var cate = queryCates();
+    var selectContent = '<option value="-1">新增主分类</option>';
+    for (var i = 1; i < cate.length; i++) {
+        selectContent += '<option value="' + cate[i].id + '">' + cate[i].name + '</option>';
+    }
+    $("#modal-select").innerHTML = selectContent;
+}
+
+function cancel() {
+    $(".cover").style.display = "none";
+}
+
+function ok() {
+    console.log("----click ok----");
+    console.log($("#modal-select").value);
+    var selectValue = $("#modal-select").value;
+    var newCateName = $("#newCateName").value;
+    if (!newCateName) {
+        alert("请输入分类名称");
+    } else {
+        if (selectValue == -1) {
+            console.log("新增主分类");
+            addCate(newCateName);
+        } else {
+            console.log("增加分类");
+            addChildCate(selectValue, newCateName);
+        }
+        initCates();//初始化分类
+        $(".cover").style.display = "none";
+    }
 }
