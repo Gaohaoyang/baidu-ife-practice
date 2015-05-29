@@ -91,6 +91,21 @@ function deleteBlank(arr) {
     return arr2;
 }
 
+/**
+ * 根据索引删除数组中的元素
+ * @param  {Array} arr   数组
+ * @param  {number} index 索引
+ * @return {Array}       新的数组
+ */
+function deleteInArray (arr,index) {
+    if (isArray(arr)&&index<arr.length) {
+        return arr.slice(0, index).concat(arr.slice(index+1));
+    } else{
+        console.error("not a arr or index error");
+    }
+}
+// console.log(deleteInArray());
+// console.log(deleteInArray(["a","b","c"],0));
 // 实现一个遍历数组的方法，针对数组中每一个元素执行fn函数，并将数组索引和元素作为参数传递
 function each(arr, fn) {
     for (var i in arr) {

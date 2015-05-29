@@ -1,16 +1,10 @@
 initAll();
 
 function initAll() {
+    // localStorage.clear();
     initDataBase(); //初始化数据表
     initCates(); //初始化分类
     initModal(); //初始化模态框
-    listAllStorage();
-    // addChildCate(1, "fuck");
-    // listAllStorage();
-    // addCate("newCATE");
-    // listAllStorage();
-    // localStorage.clear();
-    // listAllStorage();
 }
 
 //*******数据库设计************
@@ -144,6 +138,14 @@ function queryTasksLengthByCate(cateObject) {
 // console.log(queryTasksLengthByCateId(1));
 // console.log(queryTasksLengthByCateId(2));
 // console.log(queryCateById(1));
+
+/**
+ * 查询所有子分类
+ * @return {Array} 子分类对象数组
+ */
+function queryAllChildCates() {
+    return JSON.parse(localStorage.childCate);
+}
 /**
  * 根据 id 查找子分类
  * @param  {number} id
@@ -225,11 +227,12 @@ function addChildCate(pid, name) {
         localStorage.childCate = JSON.stringify(childCateJsonTemp);
 
         //同时将父分类中的 child 添加数字
-        updateCateChild(pid, newChildCate.id);
+        updateCateChildByAdd(pid, newChildCate.id);
 
     }
 }
 
+//*****************UPDATE*******************
 /**
  * 更新分类的 child 字段
  * 添加一个 childId 到 这个 id 的分类对象里
@@ -237,20 +240,123 @@ function addChildCate(pid, name) {
  * @param  {number} childId 要添加的 childId
  * @return {[type]}         [description]
  */
-function updateCateChild(id, childId) {
-    if (!id || !childId) {
-        console.log("id or childId is undefined");
-    } else {
-        var cate = JSON.parse(localStorage.cate);
-        for (var i = 0; i < cate.length; i++) {
-            if (cate[i].id == id) {
-                cate[i].child.push(childId);
+function updateCateChildByAdd(id, childId) {
+
+    var cate = JSON.parse(localStorage.cate);
+    for (var i = 0; i < cate.length; i++) {
+        if (cate[i].id == id) {
+            cate[i].child.push(childId);
+        }
+    }
+    localStorage.cate = JSON.stringify(cate);
+}
+/**
+ * 更新分类的 child 字段
+ * 删除一个 childId 在这个 id 的分类对象里
+ * @param  {number} id      要更新的分类的 id
+ * @param  {number} childId 要删除的 childId
+ * @return {[type]}         [description]
+ */
+function updateCateChildByDelete(id, childId) {
+    var cate = JSON.parse(localStorage.cate);
+    for (var i = 0; i < cate.length; i++) {
+        if (cate[i].id == id) {
+            for (var j = 0; j < cate[i].child.length; j++) {
+                if (cate[i].child[j] == childId) {
+                    cate[i].child = deleteInArray(cate[i].child, j);
+                }
             }
         }
-        localStorage.cate = JSON.stringify(cate);
     }
+    localStorage.cate = JSON.stringify(cate);
+}
+// updateCateChildByAdd(1,3);
+// listAllStorage();
+// console.log("updateCateChildByDelete");
+// updateCateChildByDelete(1, 0);
+// listAllStorage();
+
+/**
+ * 更新子分类的 child 字段
+ * 添加一个 childId 在这个 id 的子分类对象里
+ * 添加一个 task 时使用
+ * @param  {number} id      子分类 id
+ * @param  {number} childId 要添加的 childId
+ * @return {[type]}         [description]
+ */
+function updateChildCateChildByAdd(id, childId) {
+
 }
 
+//**************DELETE*****************
+
+/**
+ * 根据 id 删除分类
+ * @param  {number} id 主分类 id
+ * @return {[type]}    [description]
+ */
+function deleteCate(id) {
+    var result = [];
+    var cateArr = queryCates();
+    for (var i = 0; i < cateArr.length; i++) {
+        if (cateArr[i].id == id) {
+            result = deleteInArray(cateArr, i);
+            if (cateArr[i].child.length !== 0) {
+                for (var j = 0; j < cateArr[i].child.length; j++) {
+                    deleteChildCate(cateArr[i].child[j]);
+                }
+            }
+        }
+    }
+    localStorage.cate = JSON.stringify(result);
+}
+// deleteCate(1);
+// listAllStorage();
+// initCates();
+/**
+ * 根据 id 删除子分类
+ * @param  {number} id 子分类 id
+ * @return {[type]}    [description]
+ */
+function deleteChildCate(id) {
+    var result = [];
+    var childCateArr = queryAllChildCates();
+    for (var i = 0; i < childCateArr.length; i++) {
+        if (childCateArr[i].id == id) {
+            result = deleteInArray(childCateArr, i);
+            //更新父节点中的 childId 字段
+            updateCateChildByDelete(childCateArr[i].pid, childCateArr[i].id);
+            //查看 child
+            if (childCateArr[i].child.length !== 0) {
+                for (var j = 0; j < childCateArr[i].child.length; j++) {
+                    deleteTaskById(childCateArr[i].child[j]);
+                }
+            }
+        }
+    }
+    localStorage.childCate = JSON.stringify(result); //save
+}
+// deleteChildCate(0);
+// listAllStorage();
+// initCates();
+
+/**
+ * 根据 id 删除一条任务
+ * @param  {number} id 任务 id
+ * @return {[type]}    [description]
+ */
+function deleteTaskById(id) {
+    var result = [];
+    var allTasksArr = queryAllTasks();
+    for (var i = 0; i < allTasksArr.length; i++) {
+        if (allTasksArr[i].id == id) {
+            result = deleteInArray(allTasksArr, i);
+        }
+    }
+    localStorage.task = JSON.stringify(result); //save
+}
+// deleteTaskById(0);
+// listAllStorage();
 /**
  * 列举所有存储内容 测试时使用
  * @return {[type]} [description]
@@ -350,6 +456,7 @@ function initModal() {
         selectContent += '<option value="' + cate[i].id + '">' + cate[i].name + '</option>';
     }
     $("#modal-select").innerHTML = selectContent;
+    $("#newCateName").value = "";
 }
 
 function cancel() {
@@ -361,7 +468,7 @@ function ok() {
     console.log($("#modal-select").value);
     var selectValue = $("#modal-select").value;
     var newCateName = $("#newCateName").value;
-    if (!newCateName) {
+    if (newCateName==="") {
         alert("请输入分类名称");
     } else {
         if (selectValue == -1) {
@@ -371,7 +478,8 @@ function ok() {
             console.log("增加分类");
             addChildCate(selectValue, newCateName);
         }
-        initCates();//初始化分类
+        initCates(); //初始化分类
         $(".cover").style.display = "none";
     }
+    initModal();
 }
