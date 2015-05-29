@@ -285,7 +285,13 @@ function updateCateChildByDelete(id, childId) {
  * @return {[type]}         [description]
  */
 function updateChildCateChildByAdd(id, childId) {
+    var childCate = queryAllChildCates();
+    for (var i = 0; i < childCate.length; i++) {
+       
+        if ( childCate[i].id == id) {
 
+        }
+    };
 }
 
 //**************DELETE*****************
