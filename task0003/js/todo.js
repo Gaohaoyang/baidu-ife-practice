@@ -5,6 +5,7 @@ function initAll() {
     initDataBase(); //初始化数据表
     initCates(); //初始化分类
     initModal(); //初始化模态框
+    listAllStorage();
 }
 
 //*******数据库设计************
@@ -48,7 +49,7 @@ function initDataBase() {
             "id": 0,
             "pid": 1,
             "name": "前端",
-            "child": [0, 1],
+            "child": [0, 1, 2],
         }, {
             "id": 1,
             "pid": 1,
@@ -70,6 +71,13 @@ function initDataBase() {
             "name": "Sass",
             "date": "2015-05-31",
             "content": "学习慕课网的视频Sass",
+        }, {
+            "id": 2,
+            "pid": 1,
+            "finish": false,
+            "name": "AMD",
+            "date": "2015-05-31",
+            "content": "学习AMD",
         }];
 
         // DataBase init
@@ -103,7 +111,7 @@ function queryCateById(id) {
 }
 
 /**
- * 根据主分类 id 查询任务个数 暂时无用
+ * 根据主分类 id 查询任务个数
  * @param  {number} id 主分类 id
  * @return {number}    任务个数
  */
@@ -287,8 +295,8 @@ function updateCateChildByDelete(id, childId) {
 function updateChildCateChildByAdd(id, childId) {
     var childCate = queryAllChildCates();
     for (var i = 0; i < childCate.length; i++) {
-       
-        if ( childCate[i].id == id) {
+
+        if (childCate[i].id == id) {
 
         }
     };
@@ -397,14 +405,14 @@ function initCates() {
             if (i === 0) {
                 liStr = '<li><h2 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')</h2></li>';
             } else {
-                liStr = '<li><h2 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2></li>';
+                liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2></li>';
             }
         } else {
-            liStr = '<li><h2 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2><ul>';
+            liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2><ul>';
             var childCateArr = queryChildCatesByIdArray(cate[i].child);
             for (var j = 0; j < childCateArr.length; j++) {
                 var innerLiStr = "";
-                innerLiStr = '<li><h3 onclick="clickCate(this)"><i class="fa fa-file-o"></i><span>' + childCateArr[j].name + '</span> (' + childCateArr[j].child.length + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h3></li>';
+                innerLiStr = '<li><h3 cateid=' + childCateArr[j].id + ' onclick="clickCate(this)"><i class="fa fa-file-o"></i><span>' + childCateArr[j].name + '</span> (' + childCateArr[j].child.length + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h3></li>';
                 liStr += innerLiStr;
             }
             liStr += '</ul></li>';
@@ -420,26 +428,32 @@ function initCates() {
 
 /**
  * 点击垃圾桶图标
- * @param  {[type]} element [description]
+ * @param  {Object} e       事件对象
+ * @param  {Object} element 元素
  * @return {[type]}         [description]
  */
 function del(e, element) {
     //这里要阻止事件冒泡
     window.event ? window.event.cancelBubble = true : e.stopPropagation();
     console.log("=====del======");
-    console.log(element);
-    console.log("element.parentNode");
-    console.log(element.parentNode);
-}
-
-/**
- * 点击分类
- * @param  {[type]} element [description]
- * @return {[type]}         [description]
- */
-function clickCate(element) {
-    console.log("=======clickCate=======");
-    console.log(element);
+    var cateClicked = element.parentNode;
+    if (cateClicked.tagName.toLowerCase() === "h2") {
+        console.log("h2");
+        cateClicked.getAttribute("cateid");
+        console.log(cateClicked.getAttribute("cateid"));
+        var r = confirm("是否确定删除分类？");
+        if (r === true) {
+            deleteCate(cateClicked.getAttribute("cateid"));
+        }
+    } else if (cateClicked.tagName.toLowerCase() === "h3") {
+        console.log("h3");
+        console.log(cateClicked.getAttribute("cateid"));
+        var rr = confirm("是否确定删除分类？");
+        if (rr === true) {
+            deleteChildCate(cateClicked.getAttribute("cateid"));
+        }
+    }
+    initCates();
 }
 
 /**
@@ -449,12 +463,12 @@ function clickAddCate() {
     console.log("=========clickAddCate===========");
     var cover = $(".cover");
     cover.style.display = "block";
-    // addClickEvent(cover, function() {
-    //     cover.style.display = "none";
-    // });
-
 }
 
+/**
+ * 初始化模态框
+ *
+ */
 function initModal() {
     var cate = queryCates();
     var selectContent = '<option value="-1">新增主分类</option>';
@@ -465,16 +479,22 @@ function initModal() {
     $("#newCateName").value = "";
 }
 
+/**
+ * 取消按钮
+ */
 function cancel() {
     $(".cover").style.display = "none";
 }
 
+/**
+ * 确认按钮
+ */
 function ok() {
     console.log("----click ok----");
     console.log($("#modal-select").value);
     var selectValue = $("#modal-select").value;
     var newCateName = $("#newCateName").value;
-    if (newCateName==="") {
+    if (newCateName === "") {
         alert("请输入分类名称");
     } else {
         if (selectValue == -1) {
@@ -489,3 +509,155 @@ function ok() {
     }
     initModal();
 }
+
+/**
+ * 点击分类
+ * @param  {[type]} element [description]
+ * @return {[type]}         [description]
+ */
+function clickCate(element) {
+    console.log("=======clickCate=======");
+    console.log(element);
+    setHighLight(element); //设置高亮
+    //查询任务
+    //显示任务
+}
+
+/**
+ * 设置高亮
+ * @param {Object} element 点击的 element 对象
+ */
+function setHighLight(element) {
+    cleanAllActive();
+    addClass(element, "active");
+    // var signal = element.tagName.toLowerCase();
+    // switch (signal) {
+    //     case "div":
+    //         console.log("click div");
+    //         addClass();
+    //         break;
+    //     case "h2":
+    //         console.log("click h2");
+    //         // removeClass($("#allTasks"), "active");
+    //         addClass(element, "active");
+    //         break;
+    //     case "h3":
+    //         console.log("click h3");
+    //         break;
+    //     default:
+    //         console.log("error");
+    //         break;
+
+    // }
+}
+
+/**
+ * 清除所有高亮
+ * @return {[type]} [description]
+ */
+function cleanAllActive() {
+    removeClass($("#allTasks"), "active");
+    var h2Elements = $("#listcontent").getElementsByTagName('h2');
+    for (var i = 0; i < h2Elements.length; i++) {
+        removeClass(h2Elements[i], "active");
+    }
+    var h3Elements = $("#listcontent").getElementsByTagName('h3');
+    for (var j = 0; j < h3Elements.length; j++) {
+        removeClass(h3Elements[j], "active");
+    }
+}
+
+/**
+ * 初始化任务列表
+ * @param  {Array} taskArr 任务对象数组
+ * @return {[type]}         [description]
+ */
+function initTaskList(taskArr) {
+    var tempStr = "";
+    /*for (var i = 0; i < taskArr.length; i++) {
+        tempStr +=
+    };*/
+}
+
+/**
+ * 创建日期数据格式
+ * @param  {Array} taskArr 任务数组
+ * @return {[type]}         [description]
+ */
+function createDateData(taskArr) {
+    var dateArr = []; //日期数组
+    var newDateTasks = []; //日期数据格式数组
+    //想让任务根据日期归档
+    //1.先把出现的所有日期提取出来
+    //2.对日期排序
+    //3.根据日期查询出任务对象数组
+    //4.组合日期和任务对象数组
+    for (var i = 0; i < taskArr.length; i++) {
+        if (dateArr.indexOf(taskArr[i].date) == -1) {
+            // var newDateTasks = {};
+            // newDateTasks.date = taskArr[i].date;
+            // newDateTasks.tasks.push(taskArr[i]);
+            // resultArr.push(newDateTasks);
+            dateArr.push(taskArr[i].date);
+        }
+        // console.log(newDateTasks);
+    }
+    return dateArr;
+}
+console.log(queryAllTasks());
+console.log(createDateData(queryAllTasks()));
+
+/*[{
+    date: "2015-06-05",
+    tasks: [{
+        "id": 0,
+        "pid": 1,
+        "finish": true,
+        "name": "task1",
+        "content":"百度ife任务1",
+    }, {
+        "id": 1,
+        "pid": 1,
+        "finish": true,
+        "name": "task1",
+        "content":"百度ife任务1",
+    }]
+},{
+    date: "2015-06-06",
+    tasks: [{
+        "id": 2,
+        "pid": 1,
+        "finish": true,
+        "name": "task1",
+        "content":"百度ife任务1",
+    }, {
+        "id": 3,
+        "pid": 1,
+        "finish": true,
+        "name": "task1",
+        "content":"百度ife任务1",
+    }]
+}]*/
+
+/*var taskJson = [{
+    "id": 0,
+    "pid": 1,
+    "finish": true,
+    "name": "task1",
+    "date": "2015-05-10",
+    "content": "百度ife任务1",
+}, {
+    "id": 1,
+    "pid": 1,
+    "finish": false,
+    "name": "Sass",
+    "date": "2015-05-31",
+    "content": "学习慕课网的视频Sass",
+}, {
+    "id": 2,
+    "pid": 1,
+    "finish": false,
+    "name": "AMD",
+    "date": "2015-05-31",
+    "content": "学习AMD",
+}];*/
