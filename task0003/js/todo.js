@@ -196,6 +196,23 @@ function queryAllTasks() {
 }
 
 /**
+ * 根据日期查询任务
+ * @param  {String} date 日期字符串
+ * @return {Array}      任务对象数组
+ */
+function queryTasksByDate (date) {
+    var tasks = [];
+    var allTasks = queryAllTasks();
+    for (var i = 0; i < allTasks.length; i++) {
+        if(allTasks[i].date == date){
+            tasks.push(allTasks[i]);
+        }   
+    }
+    return tasks;
+}
+
+//**********************ADD**************************
+/**
  * 添加分类
  * @param {String} name 分类名称
  */
@@ -518,9 +535,16 @@ function ok() {
 function clickCate(element) {
     console.log("=======clickCate=======");
     console.log(element);
+    var taskList = $("#task-list");
     setHighLight(element); //设置高亮
-    //查询任务
-    //显示任务
+
+    console.log(element.getAttribute("cateid"));
+    var cateId = element.getAttribute("cateid");
+    if (cateId == -1) {
+        taskList.innerHTML = createTaskList(queryAllTasks());
+    } else{
+
+    }
 }
 
 /**
@@ -568,16 +592,24 @@ function cleanAllActive() {
 }
 
 /**
- * 初始化任务列表
+ * 创建化任务列表
  * @param  {Array} taskArr 任务对象数组
  * @return {[type]}         [description]
  */
-function initTaskList(taskArr) {
+function createTaskList(taskArr) {
     var tempStr = "";
-    /*for (var i = 0; i < taskArr.length; i++) {
-        tempStr +=
-    };*/
+    var dateTasksArr = createDateData(taskArr);
+    for (var i = 0; i < dateTasksArr.length; i++) {
+        var innerLiStr = "<div>"+dateTasksArr[i].date+"</div><ul>";
+        for (var j = 0; j < dateTasksArr[i].tasks.length; j++) {
+            innerLiStr+='<li taskid="'+dateTasksArr[i].tasks[j].id+'">'+dateTasksArr[i].tasks[j].name+'</li>';
+        }
+        innerLiStr+="</ul>";
+        tempStr += innerLiStr;
+    }
+    return tempStr;
 }
+console.log(createTaskList(queryAllTasks()));
 
 /**
  * 创建日期数据格式
@@ -592,6 +624,8 @@ function createDateData(taskArr) {
     //2.对日期排序
     //3.根据日期查询出任务对象数组
     //4.组合日期和任务对象数组
+
+    //取出所有时间
     for (var i = 0; i < taskArr.length; i++) {
         if (dateArr.indexOf(taskArr[i].date) == -1) {
             // var newDateTasks = {};
@@ -602,10 +636,22 @@ function createDateData(taskArr) {
         }
         // console.log(newDateTasks);
     }
-    return dateArr;
+    // console.log(dateArr);
+
+    //根据时间查找任务对象
+    for (var j = 0; j < dateArr.length; j++) {
+        var tempObject = {};
+        tempObject.date = dateArr[j];
+        tempObject.tasks = queryTasksByDate(dateArr[j]);
+        newDateTasks.push(tempObject);
+    }
+    
+    return newDateTasks;
 }
-console.log(queryAllTasks());
-console.log(createDateData(queryAllTasks()));
+// console.log(queryAllTasks());
+// console.log(createDateData(queryAllTasks()));
+// console.log(queryTasksByDate("2015-05-10"));
+
 
 /*[{
     date: "2015-06-05",
