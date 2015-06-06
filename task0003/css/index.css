@@ -136,13 +136,13 @@ h1 {
  */
 .mid {
     width: 260px;
-    background-color: #eee;
+    background-color: #E9E8F0;
     position: absolute;
     top: 60px;
     bottom: 0;
     left: 240px;
     z-index: 8;
-    padding: 15px 10px 0 15px;
+    /* padding: 15px 10px 0 15px; */
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -153,6 +153,7 @@ h1 {
 }
 .status {
     text-align: center;
+    margin-top: 15px;
     padding-bottom: 10px;
     border-bottom: 1px dashed #A6A6A6;
 }
@@ -184,15 +185,31 @@ h1 {
     cursor: default;
 }
 .task-list {
-    margin-top: 10px;
+    /* margin-top: 10px; */
     line-height: 2;
 }
 .task-list div {
-    background-color: #E2E2DD;
+    line-height: 2.3;
+    background-color: #dadada;
     padding-left: 10px;
+   /*  position: relative;
+    z-index: 18;
+    -webkit-box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.3);
+    -o-box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.3); */ 
 }
-.task-list ul {
-    /*padding-left: 20px;    background-color: black;*/
+.task-list li {
+    /* margin: 0 15px; */
+    padding-left: 20px;   
+    /*background-color: #fff;*/
+    cursor: pointer;
+}
+.task-list li:hover {
+    background-color: #F8F8F8;
+}
+.task-list .active{
+    background-color: #F8F8F8;
 }
 .add-task {
     width: 260px;

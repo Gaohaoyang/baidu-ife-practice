@@ -5,6 +5,7 @@ function initAll() {
     initDataBase(); //初始化数据表
     initCates(); //初始化分类
     initModal(); //初始化模态框
+    // $("#task-list").innerHTML = createTaskList(queryAllTasks());//初始化任务列表
     listAllStorage();
 }
 
@@ -54,30 +55,44 @@ function initDataBase() {
             "id": 1,
             "pid": 1,
             "name": "服务端",
-            "child": [],
+            "child": [3, 4],
         }];
 
         var taskJson = [{
             "id": 0,
-            "pid": 1,
+            "pid": 0,
             "finish": true,
             "name": "task1",
             "date": "2015-05-10",
             "content": "百度ife任务1",
         }, {
             "id": 1,
-            "pid": 1,
+            "pid": 0,
             "finish": false,
             "name": "Sass",
             "date": "2015-05-31",
             "content": "学习慕课网的视频Sass",
         }, {
             "id": 2,
-            "pid": 1,
+            "pid": 0,
             "finish": false,
             "name": "AMD",
             "date": "2015-05-31",
             "content": "学习AMD",
+        }, {
+            "id": 3,
+            "pid": 1,
+            "finish": false,
+            "name": "tomcat",
+            "date": "2015-05-31",
+            "content": "服务器搭建",
+        }, {
+            "id": 4,
+            "pid": 1,
+            "finish": false,
+            "name": "运维",
+            "date": "2015-05-31",
+            "content": "数据库备份",
         }];
 
         // DataBase init
@@ -196,20 +211,70 @@ function queryAllTasks() {
 }
 
 /**
- * 根据日期查询任务
+ * 根据日期在指定任务列表中查询任务
  * @param  {String} date 日期字符串
+ * @param  {Array} taskArr 指定任务对象列表
  * @return {Array}      任务对象数组
  */
-function queryTasksByDate (date) {
+function queryTasksByDateInTaskArr(date, taskArr) {
     var tasks = [];
-    var allTasks = queryAllTasks();
-    for (var i = 0; i < allTasks.length; i++) {
-        if(allTasks[i].date == date){
-            tasks.push(allTasks[i]);
-        }   
+    // var allTasks = queryAllTasks();
+    for (var i = 0; i < taskArr.length; i++) {
+        if (taskArr[i].date == date) {
+            tasks.push(taskArr[i]);
+        }
     }
     return tasks;
 }
+
+/**
+ * 根据 id 查询任务
+ * @param  {number} id 任务 id
+ * @return {Object}    一个任务对象
+ */
+function queryTaskById(id) {
+    var allTasks = queryAllTasks();
+    for (var i = 0; i < allTasks.length; i++) {
+        if (allTasks[i].id == id) {
+            return allTasks[i];
+        }
+    }
+}
+// console.log("queryTaskById(3)");
+// console.log(queryTaskById(3));
+
+/**
+ * 根据子分类 id 查询任务
+ * @param  {number} id 子分类 id
+ * @return {Array}    任务对象数组
+ */
+function queryTasksByChildCateId(id) {
+    var resultArr = [];
+    var tempArr = queryChildCatesById(id).child;
+    console.log("子分类对象 child 字段内容---->" + tempArr);
+    for (var i = 0; i < tempArr.length; i++) {
+        resultArr.push(queryTaskById(tempArr[i]));
+    }
+    return resultArr;
+}
+// console.log("单独测试");
+// console.log(queryTasksByChildCateId(1));
+
+/**
+ * 根据主分类 id 查询任务
+ * @param  {number} id 主分类 id
+ * @return {Array}    任务对象数组
+ */
+function queryTasksByCateId(id) {
+    var resultArr = [];
+    var cateChild = queryCateById(id).child;
+    for (var i = 0; i < cateChild.length; i++) {
+        resultArr = resultArr.concat(queryTasksByChildCateId(cateChild[i]));
+    }
+    return resultArr;
+}
+// console.log(queryTasksByCateId(1));
+
 
 //**********************ADD**************************
 /**
@@ -316,7 +381,7 @@ function updateChildCateChildByAdd(id, childId) {
         if (childCate[i].id == id) {
 
         }
-    };
+    }
 }
 
 //**************DELETE*****************
@@ -420,7 +485,7 @@ function initCates() {
         var liStr = "";
         if (cate[i].child.length === 0) {
             if (i === 0) {
-                liStr = '<li><h2 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')</h2></li>';
+                liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')</h2></li>';
             } else {
                 liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2></li>';
             }
@@ -540,10 +605,19 @@ function clickCate(element) {
 
     console.log(element.getAttribute("cateid"));
     var cateId = element.getAttribute("cateid");
-    if (cateId == -1) {
+    if (cateId == -1) { //点击所有分类
         taskList.innerHTML = createTaskList(queryAllTasks());
-    } else{
+    } else { //点击在主分类或子分类上
+        if (element.tagName.toLowerCase() == "h2") {
+            console.log("main cate--->" + cateId);
+            taskList.innerHTML = createTaskList(queryTasksByCateId(cateId));
+        } else {
+            console.log("childCate--->" + cateId);
+            //子分类
+            console.log(queryTasksByChildCateId(cateId));
 
+            taskList.innerHTML = createTaskList(queryTasksByChildCateId(cateId));
+        }
     }
 }
 
@@ -599,17 +673,19 @@ function cleanAllActive() {
 function createTaskList(taskArr) {
     var tempStr = "";
     var dateTasksArr = createDateData(taskArr);
+    // console.log(dateTasksArr);
     for (var i = 0; i < dateTasksArr.length; i++) {
-        var innerLiStr = "<div>"+dateTasksArr[i].date+"</div><ul>";
+        var innerLiStr = "<div>" + dateTasksArr[i].date + "</div><ul>";
         for (var j = 0; j < dateTasksArr[i].tasks.length; j++) {
-            innerLiStr+='<li taskid="'+dateTasksArr[i].tasks[j].id+'">'+dateTasksArr[i].tasks[j].name+'</li>';
+            innerLiStr += '<li taskid="' + dateTasksArr[i].tasks[j].id + '">' + dateTasksArr[i].tasks[j].name + '</li>';
         }
-        innerLiStr+="</ul>";
+        innerLiStr += "</ul>";
         tempStr += innerLiStr;
     }
+    // console.log(tempStr);
     return tempStr;
 }
-console.log(createTaskList(queryAllTasks()));
+// console.log(createTaskList(queryAllTasks()));
 
 /**
  * 创建日期数据格式
@@ -628,24 +704,22 @@ function createDateData(taskArr) {
     //取出所有时间
     for (var i = 0; i < taskArr.length; i++) {
         if (dateArr.indexOf(taskArr[i].date) == -1) {
-            // var newDateTasks = {};
-            // newDateTasks.date = taskArr[i].date;
-            // newDateTasks.tasks.push(taskArr[i]);
-            // resultArr.push(newDateTasks);
             dateArr.push(taskArr[i].date);
         }
-        // console.log(newDateTasks);
     }
-    // console.log(dateArr);
+    console.log(dateArr);
+    console.log(taskArr);
+
+    //对日期排序，待解决！！！！
 
     //根据时间查找任务对象
     for (var j = 0; j < dateArr.length; j++) {
         var tempObject = {};
         tempObject.date = dateArr[j];
-        tempObject.tasks = queryTasksByDate(dateArr[j]);
+        tempObject.tasks = queryTasksByDateInTaskArr(dateArr[j],taskArr);
         newDateTasks.push(tempObject);
     }
-    
+
     return newDateTasks;
 }
 // console.log(queryAllTasks());
