@@ -1,11 +1,11 @@
 initAll();
 
 function initAll() {
-    // localStorage.clear();
+    localStorage.clear();
     initDataBase(); //初始化数据表
     initCates(); //初始化分类
     initModal(); //初始化模态框
-    // $("#task-list").innerHTML = createTaskList(queryAllTasks());//初始化任务列表
+    $("#task-list").innerHTML = createTaskList(queryAllTasks());//初始化任务列表
     listAllStorage();
 }
 
@@ -56,6 +56,11 @@ function initDataBase() {
             "pid": 1,
             "name": "服务端",
             "child": [3, 4],
+        }, {
+            "id": 2,
+            "pid": 0,
+            "name": "默认子分类",
+            "child": [5],
         }];
 
         var taskJson = [{
@@ -93,6 +98,13 @@ function initDataBase() {
             "name": "运维",
             "date": "2015-05-31",
             "content": "数据库备份",
+        }, {
+            "id": 5,
+            "pid": 2,
+            "finish": false,
+            "name": "使用说明",
+            "date": "2015-05-31",
+            "content": "使用说明详细",
         }];
 
         // DataBase init
@@ -677,7 +689,7 @@ function createTaskList(taskArr) {
     for (var i = 0; i < dateTasksArr.length; i++) {
         var innerLiStr = "<div>" + dateTasksArr[i].date + "</div><ul>";
         for (var j = 0; j < dateTasksArr[i].tasks.length; j++) {
-            innerLiStr += '<li taskid="' + dateTasksArr[i].tasks[j].id + '">' + dateTasksArr[i].tasks[j].name + '</li>';
+            innerLiStr += '<li taskid="' + dateTasksArr[i].tasks[j].id + '" onclick="clickTask(this)">' + dateTasksArr[i].tasks[j].name + '</li>';
         }
         innerLiStr += "</ul>";
         tempStr += innerLiStr;
@@ -719,13 +731,19 @@ function createDateData(taskArr) {
         tempObject.tasks = queryTasksByDateInTaskArr(dateArr[j],taskArr);
         newDateTasks.push(tempObject);
     }
-
     return newDateTasks;
 }
-// console.log(queryAllTasks());
-// console.log(createDateData(queryAllTasks()));
-// console.log(queryTasksByDate("2015-05-10"));
 
+/**
+ * 点击任务
+ * @param  {Object} element 点击的 li 对象
+ * @return {[type]}         [description]
+ */
+function clickTask (element) {
+    console.log(element);
+    var taskId = element.getAttribute("taskid");
+    console.log(taskId);
+}
 
 /*[{
     date: "2015-06-05",
