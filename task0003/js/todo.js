@@ -1,11 +1,16 @@
+//全局变量
+var currentCateId = -1; //当前分类id
+var currentCateTable = "AllCate"; //当前分类表
+
 initAll();
 
 function initAll() {
-    localStorage.clear();
+    // localStorage.clear();
     initDataBase(); //初始化数据表
     initCates(); //初始化分类
     initModal(); //初始化模态框
-    $("#task-list").innerHTML = createTaskList(queryAllTasks());//初始化任务列表
+    $("#task-list").innerHTML = createTaskList(queryAllTasks()); //初始化任务列表
+    cateTaskStatusController(); //任务状态分类
     listAllStorage();
 }
 
@@ -98,13 +103,6 @@ function initDataBase() {
             "name": "运维",
             "date": "2015-05-31",
             "content": "数据库备份",
-        }, {
-            "id": 5,
-            "pid": 2,
-            "finish": false,
-            "name": "使用说明",
-            "date": "2015-05-31",
-            "content": "使用说明详细",
         }];
 
         // DataBase init
@@ -216,11 +214,30 @@ function queryChildCatesByIdArray(idArr) {
 
 /**
  * 查询所有任务
+ * @param {boolean} status 任务完成状态
  * @return {Array} 任务对象数组
  */
-function queryAllTasks() {
-    return JSON.parse(localStorage.task);
+function queryAllTasks(status) {
+    var tasksArr = JSON.parse(localStorage.task);
+    var resultArr = [];
+    if (status !== undefined) {
+        for (var i = 0; i < tasksArr.length; i++) {
+            if (status) {
+                if (tasksArr[i].finish === true) {
+                    resultArr.push(tasksArr[i]);
+                }
+            } else {
+                if (tasksArr[i].finish === false) {
+                    resultArr.push(tasksArr[i]);
+                }
+            }
+        }
+        return resultArr;
+    } else {
+        return tasksArr;
+    }
 }
+// console.log(queryAllTasks(true));
 
 /**
  * 根据日期在指定任务列表中查询任务
@@ -258,34 +275,55 @@ function queryTaskById(id) {
 /**
  * 根据子分类 id 查询任务
  * @param  {number} id 子分类 id
+ * @param  {String} status 任务完成状态
  * @return {Array}    任务对象数组
  */
-function queryTasksByChildCateId(id) {
+function queryTasksByChildCateId(id, status) {
     var resultArr = [];
     var tempArr = queryChildCatesById(id).child;
     console.log("子分类对象 child 字段内容---->" + tempArr);
     for (var i = 0; i < tempArr.length; i++) {
-        resultArr.push(queryTaskById(tempArr[i]));
+        var task = queryTaskById(tempArr[i]);
+        if (status !== undefined) {
+            console.log(status);
+            if (status) {
+                if (task.finish === true) {
+                    resultArr.push(task);
+                }
+            } else {
+                if (task.finish === false) {
+                    resultArr.push(task);
+                }
+            }
+        } else {
+            resultArr.push(task);
+        }
     }
     return resultArr;
 }
 // console.log("单独测试");
-// console.log(queryTasksByChildCateId(1));
+// console.log(queryTasksByChildCateId(0, false));
 
 /**
  * 根据主分类 id 查询任务
  * @param  {number} id 主分类 id
+ * @param  {String} status 任务完成状态
  * @return {Array}    任务对象数组
  */
-function queryTasksByCateId(id) {
+function queryTasksByCateId(id, status) {
     var resultArr = [];
     var cateChild = queryCateById(id).child;
     for (var i = 0; i < cateChild.length; i++) {
-        resultArr = resultArr.concat(queryTasksByChildCateId(cateChild[i]));
+        if (status !== undefined) {
+            console.log(status);
+            resultArr = resultArr.concat(queryTasksByChildCateId(cateChild[i], status));
+        } else {
+            resultArr = resultArr.concat(queryTasksByChildCateId(cateChild[i]));
+        }
     }
     return resultArr;
 }
-// console.log(queryTasksByCateId(1));
+console.log(queryTasksByCateId(1, true));
 
 
 //**********************ADD**************************
@@ -619,18 +657,27 @@ function clickCate(element) {
     var cateId = element.getAttribute("cateid");
     if (cateId == -1) { //点击所有分类
         taskList.innerHTML = createTaskList(queryAllTasks());
+        currentCateId = -1;
+        currentCateTable = "AllCate";
     } else { //点击在主分类或子分类上
         if (element.tagName.toLowerCase() == "h2") {
             console.log("main cate--->" + cateId);
             taskList.innerHTML = createTaskList(queryTasksByCateId(cateId));
+            currentCateId = cateId;
+            currentCateTable = "cate";
         } else {
             console.log("childCate--->" + cateId);
             //子分类
             console.log(queryTasksByChildCateId(cateId));
-
             taskList.innerHTML = createTaskList(queryTasksByChildCateId(cateId));
+            currentCateId = cateId;
+            currentCateTable = "childCate";
         }
     }
+
+    //状态按钮默认跳到所有上面
+    cleanAllActiveOnStatusButton();
+    addClass($("#all-tasks"),"active");
 }
 
 /**
@@ -680,7 +727,7 @@ function cleanAllActive() {
 /**
  * 创建化任务列表
  * @param  {Array} taskArr 任务对象数组
- * @return {[type]}         [description]
+ * @return {String}        字符串形式的html代码
  */
 function createTaskList(taskArr) {
     var tempStr = "";
@@ -702,7 +749,7 @@ function createTaskList(taskArr) {
 /**
  * 创建日期数据格式
  * @param  {Array} taskArr 任务数组
- * @return {[type]}         [description]
+ * @return {Array}         日期任务对象数组
  */
 function createDateData(taskArr) {
     var dateArr = []; //日期数组
@@ -728,10 +775,61 @@ function createDateData(taskArr) {
     for (var j = 0; j < dateArr.length; j++) {
         var tempObject = {};
         tempObject.date = dateArr[j];
-        tempObject.tasks = queryTasksByDateInTaskArr(dateArr[j],taskArr);
+        tempObject.tasks = queryTasksByDateInTaskArr(dateArr[j], taskArr);
         newDateTasks.push(tempObject);
     }
     return newDateTasks;
+}
+
+/**
+ * 分类任务状态控制按钮
+ * @return {[type]} [description]
+ */
+function cateTaskStatusController() {
+    addClickEvent($("#all-tasks"), function() {
+        console.log("click all tasks");
+        cateTaskStatusControllerHelper(this);
+    });
+    addClickEvent($("#unfinish-tasks"), function() {
+        console.log("click unfinish tasks");
+        cateTaskStatusControllerHelper(this,false);
+    });
+    addClickEvent($("#finished-tasks"), function() {
+        console.log("click finished-tasks");
+        cateTaskStatusControllerHelper(this,true);
+    });
+}
+
+/**
+ * 任务列表状态切换辅助
+ * 根据状态不同，修改不同的html代码
+ *
+ * @param  {boolean} finish 完成状态
+ */
+function cateTaskStatusControllerHelper(element, finish) {
+    cleanAllActiveOnStatusButton(); //清除状态按钮高亮
+    addClass(element,"active");
+
+    var taskList = $("#task-list");
+
+    if (currentCateId == -1) {
+        taskList.innerHTML = createTaskList(queryAllTasks(finish));
+    } else {
+        if (currentCateTable == "cate") {
+            taskList.innerHTML = createTaskList(queryTasksByCateId(currentCateId, finish));
+        } else {
+            taskList.innerHTML = createTaskList(queryTasksByChildCateId(currentCateId, finish));
+        }
+    }
+}
+
+/**
+ * 清除状态按钮高亮
+ */
+function cleanAllActiveOnStatusButton() {
+    removeClass($("#all-tasks"), "active");
+    removeClass($("#unfinish-tasks"), "active");
+    removeClass($("#finished-tasks"), "active");
 }
 
 /**
@@ -739,10 +837,12 @@ function createDateData(taskArr) {
  * @param  {Object} element 点击的 li 对象
  * @return {[type]}         [description]
  */
-function clickTask (element) {
+function clickTask(element) {
     console.log(element);
     var taskId = element.getAttribute("taskid");
     console.log(taskId);
+
+
 }
 
 /*[{
