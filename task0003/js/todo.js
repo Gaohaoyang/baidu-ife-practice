@@ -838,9 +838,8 @@ function cleanAllActiveOnStatusButton() {
  * @return {[type]}         [description]
  */
 function clickTask(element) {
-    console.log(element);
+
     var taskId = element.getAttribute("taskid");
-    console.log(taskId);
     var task = queryTaskById(taskId);
 
     $(".todo-name").innerHTML = task.name;
@@ -853,10 +852,19 @@ function clickTask(element) {
     } else { //未完成
         manipulate.innerHTML = '<a><i class="fa fa-check-square-o"></i></a><a><i class="fa fa-pencil-square-o"></i></a>';
     }
+
+    cleanTasksHighLight();
+    addClass(element,"active");
 }
 
-function cleanTasks(argument) {
-    // body...
+/**
+ * 清除任务列表的高亮
+ */
+function cleanTasksHighLight() {
+    var aLi = $("#task-list").getElementsByTagName('li');
+    for (var i = 0; i < aLi.length; i++) {
+        removeClass(aLi[i], "active");
+    }
 }
 
 /*[{

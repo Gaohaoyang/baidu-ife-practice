@@ -204,12 +204,16 @@ h1 {
     padding-left: 20px;   
     /*background-color: #fff;*/
     cursor: pointer;
+    transition: 0.2s ease-out;
+    -webkit-transition: 0.2s ease-out;
+    -moz-transition: 0.2s ease-out;
+    -o-transition: 0.2s ease-out;
 }
 .task-list li:hover {
-    background-color: #F8F8F8;
+    background-color: #FbFbFb;
 }
 .task-list .active{
-    background-color: #F8F8F8;
+    background-color: #FbFbFb;
 }
 .add-task {
     width: 260px;
