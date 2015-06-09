@@ -5,7 +5,7 @@ var currentCateTable = "AllCate"; //当前分类表
 initAll();
 
 function initAll() {
-    // localStorage.clear();
+    localStorage.clear();
     initDataBase(); //初始化数据表
     initCates(); //初始化分类
     initModal(); //初始化模态框
@@ -44,65 +44,72 @@ function initDataBase() {
         var cateJson = [{
             "id": 0,
             "name": "默认分类",
-            "child": []
+            "child": [0]
         }, {
             "id": 1,
             "name": "工作",
-            "child": [0, 1]
+            "child": [1, 2]
         }];
 
         var childCateJson = [{
             "id": 0,
+            "pid": 0,
+            "name": "默认子分类",
+            "child": [5],
+        },{
+            "id": 1,
             "pid": 1,
             "name": "前端",
             "child": [0, 1, 2],
         }, {
-            "id": 1,
+            "id": 2,
             "pid": 1,
             "name": "服务端",
             "child": [3, 4],
-        }, {
-            "id": 2,
-            "pid": 0,
-            "name": "默认子分类",
-            "child": [5],
-        }];
+        }, ];
 
         var taskJson = [{
             "id": 0,
-            "pid": 0,
+            "pid": 1,
             "finish": true,
             "name": "task1",
             "date": "2015-05-10",
             "content": "百度ife任务1",
         }, {
             "id": 1,
-            "pid": 0,
+            "pid": 1,
             "finish": false,
             "name": "Sass",
             "date": "2015-05-31",
             "content": "学习慕课网的视频Sass",
         }, {
             "id": 2,
-            "pid": 0,
+            "pid": 1,
             "finish": false,
             "name": "AMD",
             "date": "2015-05-31",
             "content": "学习AMD",
         }, {
             "id": 3,
-            "pid": 1,
+            "pid": 2,
             "finish": false,
             "name": "tomcat",
             "date": "2015-05-31",
             "content": "服务器搭建",
         }, {
             "id": 4,
-            "pid": 1,
+            "pid": 2,
             "finish": false,
             "name": "运维",
             "date": "2015-05-31",
             "content": "数据库备份",
+        }, {
+            "id": 5,
+            "pid": 0,
+            "finish": false,
+            "name": "使用说明",
+            "date": "2015-06-31",
+            "content": "说明！！！",
         }];
 
         // DataBase init
@@ -192,6 +199,7 @@ function queryChildCatesById(id) {
         }
     }
 }
+console.log(queryChildCatesById(0));
 // console.log("queryChildCatesById----->" + queryChildCatesById(0));
 // console.log(queryChildCatesById(0));
 
@@ -323,7 +331,8 @@ function queryTasksByCateId(id, status) {
     }
     return resultArr;
 }
-console.log(queryTasksByCateId(1, true));
+// console.log(queryTasksByCateId(1, true));
+console.log(queryTasksByCateId(0));
 
 
 //**********************ADD**************************
@@ -530,24 +539,32 @@ function initCates() {
 
     var cate = queryCates(); //查出所有分类
     var tempStr = '<ul>';
+    var defaultChildCate = queryChildCatesById(0);
 
     for (var i = 0; i < cate.length; i++) {
         var liStr = "";
+
         if (cate[i].child.length === 0) {
-            if (i === 0) {
-                liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')</h2></li>';
-            } else {
+            // if (i === 0) {
+            //     liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')</h2></li>';
+            // } else {
                 liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2></li>';
-            }
+            // }
         } else {
-            liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2><ul>';
-            var childCateArr = queryChildCatesByIdArray(cate[i].child);
-            for (var j = 0; j < childCateArr.length; j++) {
-                var innerLiStr = "";
-                innerLiStr = '<li><h3 cateid=' + childCateArr[j].id + ' onclick="clickCate(this)"><i class="fa fa-file-o"></i><span>' + childCateArr[j].name + '</span> (' + childCateArr[j].child.length + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h3></li>';
-                liStr += innerLiStr;
+            if(i===0){
+                // var childCateDefault = queryChildCatesById(0);
+                // liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')</h2><ul><li><h3 cateid=' + childCateArr[j].id + ' onclick="clickCate(this)"><i class="fa fa-file-o"></i><span>' + childCateDefault.name + '</span> (' + childCateDefault.length + ')</h3></li>';
+                liStr = '<li><h2 cateid=0 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (1)</h2><ul><li><h3 cateid=0 onclick="clickCate(this)"><i class="fa fa-file-o"></i><span>'+defaultChildCate.name+'</span> ('+defaultChildCate.child.length+')</h3></li>';
+            }else{
+                liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2><ul>';
+                var childCateArr = queryChildCatesByIdArray(cate[i].child);
+                for (var j = 0; j < childCateArr.length; j++) {
+                    var innerLiStr = "";
+                    innerLiStr = '<li><h3 cateid=' + childCateArr[j].id + ' onclick="clickCate(this)"><i class="fa fa-file-o"></i><span>' + childCateArr[j].name + '</span> (' + childCateArr[j].child.length + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h3></li>';
+                    liStr += innerLiStr;
+                }
+                liStr += '</ul></li>';
             }
-            liStr += '</ul></li>';
         }
         tempStr += liStr;
     }
@@ -586,6 +603,7 @@ function del(e, element) {
         }
     }
     initCates();
+    $("#task-list").innerHTML = createTaskList(queryAllTasks()); //初始化任务列表
 }
 
 /**
@@ -840,6 +858,19 @@ function cleanAllActiveOnStatusButton() {
 function clickTask(element) {
 
     var taskId = element.getAttribute("taskid");
+
+    generateTaskById(taskId);
+
+    cleanTasksHighLight();
+    addClass(element, "active");
+}
+
+/**
+ * 根据任务 id 生成右边的具体内容
+ * @param  {number} taskId 任务id
+ * @return {[type]}        [description]
+ */
+function generateTaskById(taskId) {
     var task = queryTaskById(taskId);
 
     $(".todo-name").innerHTML = task.name;
@@ -852,9 +883,6 @@ function clickTask(element) {
     } else { //未完成
         manipulate.innerHTML = '<a><i class="fa fa-check-square-o"></i></a><a><i class="fa fa-pencil-square-o"></i></a>';
     }
-
-    cleanTasksHighLight();
-    addClass(element,"active");
 }
 
 /**
@@ -865,6 +893,11 @@ function cleanTasksHighLight() {
     for (var i = 0; i < aLi.length; i++) {
         removeClass(aLi[i], "active");
     }
+}
+
+function clickAddTask() {
+    console.log("clickAddTask");
+
 }
 
 /*[{
