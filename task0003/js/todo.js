@@ -895,9 +895,13 @@ function cleanTasksHighLight() {
     }
 }
 
+/**
+ * 点击增加任务按钮
+ * @return {[type]} [description]
+ */
 function clickAddTask() {
     console.log("clickAddTask");
-
+    
 }
 
 /*[{
