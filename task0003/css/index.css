@@ -22,14 +22,14 @@ h2,h3{
 /**
  * common
  */
-body, button {
+body, button,input,textarea {
     font-family: 'Microsoft YaHei', 'SimHei', 'STHeiti', sans-serif;
 }
 body{
     min-width: 700px;
     min-height: 400px;
 }
-select, input{
+select, input,textarea{
     border: none;
     outline: none;
 }
@@ -238,7 +238,7 @@ h1 {
     height: 55px;
     line-height: 55px;
     background-color: #dadada;
-    overflow: auto;
+    overflow: hidden;
     position: relative;
     z-index: 5;
     -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -272,7 +272,42 @@ h1 {
 }
 .content {
     padding: 15px;
+    /*position: relative;*/
 }
+
+.right input{
+    font-size: 16px;
+    border: 1px solid #AEAEAE;
+}
+.right input:focus{
+    border:1px solid #404040;
+}
+.input-title{
+    padding: 7px 10px;
+    margin-top: 10px;
+    width: 244px;
+}
+.input-date{
+    padding: 5px 10px;
+}
+.textarea-content{
+    font-size: 16px;
+    /*border: 1px solid #AEAEAE;*/
+    width: 200px;
+    overflow-y:visible;
+    /*height: 200px;*/
+   /* position:absolute;
+    top: 15px;
+    right: 15px;
+    bottom: 15px;
+    left: 15px;*/
+}
+/*.textarea-content:focus{
+    border:1px solid #404040;
+}*/
+div模拟textarea实现高度自适应
+http://blog.csdn.net/littlebirdofjava/article/details/14166391
+
 /**
  * ================modal==============
  */
