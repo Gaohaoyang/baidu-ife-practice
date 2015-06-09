@@ -677,7 +677,7 @@ function clickCate(element) {
 
     //状态按钮默认跳到所有上面
     cleanAllActiveOnStatusButton();
-    addClass($("#all-tasks"),"active");
+    addClass($("#all-tasks"), "active");
 }
 
 /**
@@ -792,11 +792,11 @@ function cateTaskStatusController() {
     });
     addClickEvent($("#unfinish-tasks"), function() {
         console.log("click unfinish tasks");
-        cateTaskStatusControllerHelper(this,false);
+        cateTaskStatusControllerHelper(this, false);
     });
     addClickEvent($("#finished-tasks"), function() {
         console.log("click finished-tasks");
-        cateTaskStatusControllerHelper(this,true);
+        cateTaskStatusControllerHelper(this, true);
     });
 }
 
@@ -808,7 +808,7 @@ function cateTaskStatusController() {
  */
 function cateTaskStatusControllerHelper(element, finish) {
     cleanAllActiveOnStatusButton(); //清除状态按钮高亮
-    addClass(element,"active");
+    addClass(element, "active");
 
     var taskList = $("#task-list");
 
@@ -841,8 +841,22 @@ function clickTask(element) {
     console.log(element);
     var taskId = element.getAttribute("taskid");
     console.log(taskId);
+    var task = queryTaskById(taskId);
 
+    $(".todo-name").innerHTML = task.name;
+    $(".task-date span").innerHTML = task.date;
+    $(".content").innerHTML = task.content;
 
+    var manipulate = $(".manipulate");
+    if (task.finish) { //若已完成
+        manipulate.innerHTML = "";
+    } else { //未完成
+        manipulate.innerHTML = '<a><i class="fa fa-check-square-o"></i></a><a><i class="fa fa-pencil-square-o"></i></a>';
+    }
+}
+
+function cleanTasks(argument) {
+    // body...
 }
 
 /*[{
