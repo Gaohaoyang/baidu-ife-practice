@@ -186,6 +186,7 @@ h1 {
 
     /* margin-top: 10px; */
     line-height: 2;
+    font-size: 14px;
 }
 .task-list div {
     line-height: 2.3;
@@ -237,6 +238,7 @@ h1 {
     line-height: 55px;
     background-color: #dadada;
     overflow: hidden;
+    font-weight: bold;
     position: relative;
     z-index: 5;
     -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);

@@ -398,7 +398,8 @@ function addTask(taskObject) {
 
     updateChildCateChildByAdd(taskObject.pid, taskObject.id); //更新子分类的 child 字段
     localStorage.task = JSON.stringify(taskArr);
-    currentTaskId = taskObject.id;
+
+    return taskObject.id;//将当前任务 id 返回，方便调用
 }
 // console.log(queryAllTasks()[queryAllTasks().length-1].id+1);
 // {
@@ -728,6 +729,8 @@ function clickCate(element) {
     cleanAllActiveOnStatusButton();
     addClass($("#all-tasks"), "active");
     addClass($("[taskid]"), "active"); //将第一个有 taskid 属性的元素高亮
+
+    generateTaskById(currentTaskId);
 }
 
 /**
@@ -809,6 +812,7 @@ function createDateData(taskArr) {
         tempObject.tasks = queryTasksByDateInTaskArr(dateArr[j], taskArr);
         newDateTasks.push(tempObject);
     }
+    currentTaskId = newDateTasks[0].tasks[0].id;
     return newDateTasks;
 }
 
@@ -871,6 +875,8 @@ function cleanAllActiveOnStatusButton() {
 function clickTask(element) {
 
     var taskId = element.getAttribute("taskid");
+
+    currentTaskId = taskId;
 
     generateTaskById(taskId);
 
@@ -962,8 +968,10 @@ function clickSaveOrCancel() {
             }
             console.log(taskObject);
 
-            addTask(taskObject);
+            var curTaskId = addTask(taskObject);
+            
             initCates(); //初始化分类
+            
             //更新任务列表
             var taskList = $("#task-list");
             if (currentCateTable === "AllCate") { //如果焦点在所有分类上
@@ -974,38 +982,12 @@ function clickSaveOrCancel() {
                 taskList.innerHTML = createTaskList(queryTasksByChildCateId(currentCateId));
             }
             //更新详细内容区
-            generateTaskById(currentTaskId); //初始化任务详细
-
-
-            /* var taskList = $("#task-list");
-            setHighLight(element); //设置高亮
-
-            console.log(element.getAttribute("cateid"));
-            var cateId = element.getAttribute("cateid");
-            if (cateId == -1) { //点击所有分类
-                taskList.innerHTML = createTaskList(queryAllTasks());
-                currentCateId = -1;
-                currentCateTable = "AllCate";
-            } else { //点击在主分类或子分类上
-                if (element.tagName.toLowerCase() == "h2") {
-                    console.log("main cate--->" + cateId);
-                    taskList.innerHTML = createTaskList(queryTasksByCateId(cateId));
-                    currentCateId = cateId;
-                    currentCateTable = "cate";
-                } else {
-                    console.log("childCate--->" + cateId);
-                    //子分类
-                    console.log(queryTasksByChildCateId(cateId));
-                    taskList.innerHTML = createTaskList(queryTasksByChildCateId(cateId));
-                    currentCateId = cateId;
-                    currentCateTable = "childCate";
-                }
-            }*/
-
+            generateTaskById(curTaskId); //初始化任务详细
         }
     });
     addClickEvent($(".cancel-save"), function() {
         console.log("cancel save");
+        generateTaskById(currentTaskId);
     });
 }
 
