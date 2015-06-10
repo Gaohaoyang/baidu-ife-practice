@@ -1,6 +1,7 @@
 //全局变量
 var currentCateId = -1; //当前分类id
 var currentCateTable = "AllCate"; //当前分类表
+var currentTaskId = -1; //当前任务 id
 
 initAll();
 
@@ -11,6 +12,9 @@ function initAll() {
     initModal(); //初始化模态框
     $("#task-list").innerHTML = createTaskList(queryAllTasks()); //初始化任务列表
     cateTaskStatusController(); //任务状态分类
+    generateTaskById(-1); //初始化任务详细
+    addClass($("[taskid]"), "active"); //将第一个有 taskid 属性的元素高亮
+    clickSaveOrCancel(); //保存或放弃保存任务
     listAllStorage();
 }
 
@@ -55,8 +59,8 @@ function initDataBase() {
             "id": 0,
             "pid": 0,
             "name": "默认子分类",
-            "child": [5],
-        },{
+            "child": [-1],
+        }, {
             "id": 1,
             "pid": 1,
             "name": "前端",
@@ -69,6 +73,13 @@ function initDataBase() {
         }, ];
 
         var taskJson = [{
+            "id": -1,
+            "pid": 0,
+            "finish": true,
+            "name": "使用说明",
+            "date": "2015-06-05",
+            "content": "说明！！！",
+        }, {
             "id": 0,
             "pid": 1,
             "finish": true,
@@ -103,13 +114,6 @@ function initDataBase() {
             "name": "运维",
             "date": "2015-05-31",
             "content": "数据库备份",
-        }, {
-            "id": 5,
-            "pid": 0,
-            "finish": false,
-            "name": "使用说明",
-            "date": "2015-06-31",
-            "content": "说明！！！",
         }];
 
         // DataBase init
@@ -381,6 +385,30 @@ function addChildCate(pid, name) {
     }
 }
 
+/**
+ * 添加一个任务
+ * @param {Object} taskObject 任务对象，但是不包含 id 属性
+ */
+function addTask(taskObject) {
+    var taskArr = queryAllTasks();
+    taskObject.id = taskArr[taskArr.length - 1].id + 1; //id 生成
+    taskArr.push(taskObject);
+    console.log(taskObject);
+    console.log(taskArr);
+
+    updateChildCateChildByAdd(taskObject.pid, taskObject.id); //更新子分类的 child 字段
+    localStorage.task = JSON.stringify(taskArr);
+    currentTaskId = taskObject.id;
+}
+// console.log(queryAllTasks()[queryAllTasks().length-1].id+1);
+// {
+//            "id": 4,
+//            "pid": 2,
+//            "finish": false,
+//            "name": "运维",
+//            "date": "2015-05-31",
+//            "content": "数据库备份",
+//        }
 //*****************UPDATE*******************
 /**
  * 更新分类的 child 字段
@@ -438,10 +466,13 @@ function updateChildCateChildByAdd(id, childId) {
     for (var i = 0; i < childCate.length; i++) {
 
         if (childCate[i].id == id) {
-
+            childCate[i].child.push(childId);
         }
     }
+    localStorage.childCate = JSON.stringify(childCate);
 }
+// updateChildCateChildByAdd(0,1000);
+// listAllStorage();
 
 //**************DELETE*****************
 
@@ -548,14 +579,14 @@ function initCates() {
             // if (i === 0) {
             //     liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')</h2></li>';
             // } else {
-                liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2></li>';
+            liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2></li>';
             // }
         } else {
-            if(i===0){
+            if (i === 0) {
                 // var childCateDefault = queryChildCatesById(0);
                 // liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')</h2><ul><li><h3 cateid=' + childCateArr[j].id + ' onclick="clickCate(this)"><i class="fa fa-file-o"></i><span>' + childCateDefault.name + '</span> (' + childCateDefault.length + ')</h3></li>';
-                liStr = '<li><h2 cateid=0 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (1)</h2><ul><li><h3 cateid=0 onclick="clickCate(this)"><i class="fa fa-file-o"></i><span>'+defaultChildCate.name+'</span> ('+defaultChildCate.child.length+')</h3></li>';
-            }else{
+                liStr = '<li><h2 cateid=0 onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (1)</h2><ul><li><h3 cateid=0 onclick="clickCate(this)"><i class="fa fa-file-o"></i><span>' + defaultChildCate.name + '</span> (' + defaultChildCate.child.length + ')</h3></li>';
+            } else {
                 liStr = '<li><h2 cateid=' + cate[i].id + ' onclick="clickCate(this)"><i class="fa fa-folder-open"></i><span>' + cate[i].name + '</span> (' + queryTasksLengthByCate(cate[i]) + ')<i class="fa fa-trash-o" onclick="del(event,this)"></i></h2><ul>';
                 var childCateArr = queryChildCatesByIdArray(cate[i].child);
                 for (var j = 0; j < childCateArr.length; j++) {
@@ -696,6 +727,7 @@ function clickCate(element) {
     //状态按钮默认跳到所有上面
     cleanAllActiveOnStatusButton();
     addClass($("#all-tasks"), "active");
+    addClass($("[taskid]"), "active"); //将第一个有 taskid 属性的元素高亮
 }
 
 /**
@@ -705,25 +737,6 @@ function clickCate(element) {
 function setHighLight(element) {
     cleanAllActive();
     addClass(element, "active");
-    // var signal = element.tagName.toLowerCase();
-    // switch (signal) {
-    //     case "div":
-    //         console.log("click div");
-    //         addClass();
-    //         break;
-    //     case "h2":
-    //         console.log("click h2");
-    //         // removeClass($("#allTasks"), "active");
-    //         addClass(element, "active");
-    //         break;
-    //     case "h3":
-    //         console.log("click h3");
-    //         break;
-    //     default:
-    //         console.log("error");
-    //         break;
-
-    // }
 }
 
 /**
@@ -877,6 +890,8 @@ function generateTaskById(taskId) {
     $(".task-date span").innerHTML = task.date;
     $(".content").innerHTML = task.content;
 
+    $(".button-area").style.display = "none";
+
     var manipulate = $(".manipulate");
     if (task.finish) { //若已完成
         manipulate.innerHTML = "";
@@ -901,7 +916,97 @@ function cleanTasksHighLight() {
  */
 function clickAddTask() {
     console.log("clickAddTask");
-    
+    // $(".right").innerHTML = '';
+    $(".todo-name").innerHTML = '<input type="text" class="input-title" placeholder="请输入标题">';
+    $(".manipulate").innerHTML="";
+    $(".task-date span").innerHTML = '<input type="date" class="input-date">';
+    $(".content").innerHTML = '<textarea class="textarea-content" placeholder="请输入任务内容"></textarea>';
+    $(".button-area").style.display = "block";
+}
+
+/**
+ * 点击保存任务或放弃保存
+ * @return {[type]} [description]
+ */
+function clickSaveOrCancel() {
+    addClickEvent($(".save"), function() {
+        console.log("save");
+        console.log(currentCateId);
+        console.log(currentCateTable);
+
+        var title = $(".input-title");
+        var content = $(".textarea-content");
+        var date = $(".input-date");
+        var info = $(".info");
+
+        if (title.value === "") {
+            info.innerHTML = "标题不能为空";
+        } else if (date.value === "") {
+            info.innerHTML = "日期不能为空";
+        } else if (content.value === "") {
+            info.innerHTML = "内容不能为空";
+        } else {
+            var taskObject = {};
+            taskObject.finish = false;
+            taskObject.name = title.value;
+            taskObject.content = content.value;
+            taskObject.date = date.value;
+
+            //对 pid 的处理
+            if (currentCateTable === "AllCate") { //如果焦点在所有分类上
+                taskObject.pid = 0;
+            } else if (currentCateTable === "cate") {
+                taskObject.pid = queryCateById(currentCateId).child[0];
+            } else {
+                taskObject.pid = currentCateId;
+            }
+            console.log(taskObject);
+
+            addTask(taskObject);
+            initCates(); //初始化分类
+            //更新任务列表
+            var taskList = $("#task-list");
+            if (currentCateTable === "AllCate") { //如果焦点在所有分类上
+                taskList.innerHTML = createTaskList(queryAllTasks());
+            } else if (currentCateTable === "cate") {
+                taskList.innerHTML = createTaskList(queryTasksByCateId(currentCateId));
+            } else {
+                taskList.innerHTML = createTaskList(queryTasksByChildCateId(currentCateId));
+            }
+            //更新详细内容区
+            generateTaskById(currentTaskId); //初始化任务详细
+
+
+            /* var taskList = $("#task-list");
+            setHighLight(element); //设置高亮
+
+            console.log(element.getAttribute("cateid"));
+            var cateId = element.getAttribute("cateid");
+            if (cateId == -1) { //点击所有分类
+                taskList.innerHTML = createTaskList(queryAllTasks());
+                currentCateId = -1;
+                currentCateTable = "AllCate";
+            } else { //点击在主分类或子分类上
+                if (element.tagName.toLowerCase() == "h2") {
+                    console.log("main cate--->" + cateId);
+                    taskList.innerHTML = createTaskList(queryTasksByCateId(cateId));
+                    currentCateId = cateId;
+                    currentCateTable = "cate";
+                } else {
+                    console.log("childCate--->" + cateId);
+                    //子分类
+                    console.log(queryTasksByChildCateId(cateId));
+                    taskList.innerHTML = createTaskList(queryTasksByChildCateId(cateId));
+                    currentCateId = cateId;
+                    currentCateTable = "childCate";
+                }
+            }*/
+
+        }
+    });
+    addClickEvent($(".cancel-save"), function() {
+        console.log("cancel save");
+    });
 }
 
 /*[{
