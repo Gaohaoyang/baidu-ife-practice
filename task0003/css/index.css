@@ -214,6 +214,9 @@ h1 {
 .task-list .active {
     background-color: #FbFbFb;
 }
+.task-done{
+    color: #24692B
+}
 .add-task {
     width: 260px;
     background-color: #D8D8D8;

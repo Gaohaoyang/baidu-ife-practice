@@ -14,7 +14,7 @@ function initAll() {
     cateTaskStatusController(); //任务状态分类
     generateTaskById(-1); //初始化任务详细
     addClass($("[taskid]"), "active"); //将第一个有 taskid 属性的元素高亮
-    clickSaveOrCancel(); //保存或放弃保存任务
+    // clickSaveOrCancel(); //保存或放弃保存任务
     listAllStorage();
 }
 
@@ -78,7 +78,7 @@ function initDataBase() {
             "finish": true,
             "name": "使用说明",
             "date": "2015-06-05",
-            "content": "说明！！！",
+            "content": "左侧为分类列表\n中间为当前分类下的任务列表\n右侧为任务详情",
         }, {
             "id": 0,
             "pid": 1,
@@ -311,7 +311,9 @@ function queryTasksByChildCateId(id, status) {
             resultArr.push(task);
         }
     }
+    console.log(resultArr + "----------success");
     return resultArr;
+
 }
 // console.log("单独测试");
 // console.log(queryTasksByChildCateId(0, false));
@@ -399,7 +401,7 @@ function addTask(taskObject) {
     updateChildCateChildByAdd(taskObject.pid, taskObject.id); //更新子分类的 child 字段
     localStorage.task = JSON.stringify(taskArr);
 
-    return taskObject.id;//将当前任务 id 返回，方便调用
+    return taskObject.id; //将当前任务 id 返回，方便调用
 }
 // console.log(queryAllTasks()[queryAllTasks().length-1].id+1);
 // {
@@ -474,6 +476,43 @@ function updateChildCateChildByAdd(id, childId) {
 }
 // updateChildCateChildByAdd(0,1000);
 // listAllStorage();
+
+/**
+ * 根据任务 id 更新任务状态
+ * @param  {number} taskId 任务 id
+ * @return {[type]}        [description]
+ */
+function updateTaskStatusById(taskId) {
+    var allTasks = queryAllTasks();
+    for (var i = 0; i < allTasks.length; i++) {
+        if (allTasks[i].id == taskId) {
+            allTasks[i].finish = true;
+        }
+    }
+    localStorage.task = JSON.stringify(allTasks);
+}
+// updateTaskStatusById(4);
+// listAllStorage();
+
+/**
+ * 修改任务
+ * @param  {number} id      任务id
+ * @param  {String} name    任务标题
+ * @param  {String} date    任务日期
+ * @param  {String} content 任务内容
+ * @return {[type]}         [description]
+ */
+function updateTaskById(id, name, date, content) {
+    var allTasks = queryAllTasks();
+    for (var i = 0; i < allTasks.length; i++) {
+        if (allTasks[i].id == id) {
+            allTasks[i].name = name;
+            allTasks[i].date = date;
+            allTasks[i].content = content;
+        }
+    }
+    localStorage.task = JSON.stringify(allTasks);
+}
 
 //**************DELETE*****************
 
@@ -759,21 +798,36 @@ function cleanAllActive() {
 }
 
 /**
- * 创建化任务列表
+ * 创建任务列表
  * @param  {Array} taskArr 任务对象数组
  * @return {String}        字符串形式的html代码
  */
 function createTaskList(taskArr) {
     var tempStr = "";
-    var dateTasksArr = createDateData(taskArr);
-    // console.log(dateTasksArr);
-    for (var i = 0; i < dateTasksArr.length; i++) {
-        var innerLiStr = "<div>" + dateTasksArr[i].date + "</div><ul>";
-        for (var j = 0; j < dateTasksArr[i].tasks.length; j++) {
-            innerLiStr += '<li taskid="' + dateTasksArr[i].tasks[j].id + '" onclick="clickTask(this)">' + dateTasksArr[i].tasks[j].name + '</li>';
+    console.log("dateTasksArr------->");
+    console.log(taskArr);
+    if (taskArr.length === 0) {
+        tempStr = "";
+    } else {
+
+        var dateTasksArr = createDateData(taskArr);
+        console.log("dateTasksArr------->" + dateTasksArr);
+        for (var i = 0; i < dateTasksArr.length; i++) {
+            var innerLiStr = "<div>" + dateTasksArr[i].date + "</div><ul>";
+            for (var j = 0; j < dateTasksArr[i].tasks.length; j++) {
+                var finishOrNotStr = "";
+                if (dateTasksArr[i].tasks[j].finish) {
+                    finishOrNotStr = '<li class="task-done" taskid="' + dateTasksArr[i].tasks[j].id + '" onclick="clickTask(this)"><i class="fa fa-check"></i> ' + dateTasksArr[i].tasks[j].name + '</li>';
+                } else {
+                    finishOrNotStr = '<li taskid="' + dateTasksArr[i].tasks[j].id + '" onclick="clickTask(this)">' + dateTasksArr[i].tasks[j].name + '</li>';
+                }
+
+                // innerLiStr += '<li taskid="' + dateTasksArr[i].tasks[j].id + '" onclick="clickTask(this)">' + dateTasksArr[i].tasks[j].name + '</li>';
+                innerLiStr += finishOrNotStr;
+            }
+            innerLiStr += "</ul>";
+            tempStr += innerLiStr;
         }
-        innerLiStr += "</ul>";
-        tempStr += innerLiStr;
     }
     // console.log(tempStr);
     return tempStr;
@@ -853,7 +907,10 @@ function cateTaskStatusControllerHelper(element, finish) {
         if (currentCateTable == "cate") {
             taskList.innerHTML = createTaskList(queryTasksByCateId(currentCateId, finish));
         } else {
+            console.log("**************************");
+            console.log(currentCateId);
             taskList.innerHTML = createTaskList(queryTasksByChildCateId(currentCateId, finish));
+            console.log("*********** END **********");
         }
     }
 }
@@ -902,7 +959,7 @@ function generateTaskById(taskId) {
     if (task.finish) { //若已完成
         manipulate.innerHTML = "";
     } else { //未完成
-        manipulate.innerHTML = '<a><i class="fa fa-check-square-o"></i></a><a><i class="fa fa-pencil-square-o"></i></a>';
+        manipulate.innerHTML = '<a onclick="checkTaskDone()"><i class="fa fa-check-square-o"></i></a><a onclick="changeTask()"><i class="fa fa-pencil-square-o"></i></a>';
     }
 }
 
@@ -924,10 +981,12 @@ function clickAddTask() {
     console.log("clickAddTask");
     // $(".right").innerHTML = '';
     $(".todo-name").innerHTML = '<input type="text" class="input-title" placeholder="请输入标题">';
-    $(".manipulate").innerHTML="";
+    $(".manipulate").innerHTML = "";
     $(".task-date span").innerHTML = '<input type="date" class="input-date">';
     $(".content").innerHTML = '<textarea class="textarea-content" placeholder="请输入任务内容"></textarea>';
+    $(".button-area").innerHTML = '<span class="info"></span>                    <button class="save">保存</button>                    <button class="cancel-save">放弃</button>';
     $(".button-area").style.display = "block";
+    clickSaveOrCancel();
 }
 
 /**
@@ -969,9 +1028,9 @@ function clickSaveOrCancel() {
             console.log(taskObject);
 
             var curTaskId = addTask(taskObject);
-            
+
             initCates(); //初始化分类
-            
+
             //更新任务列表
             var taskList = $("#task-list");
             if (currentCateTable === "AllCate") { //如果焦点在所有分类上
@@ -982,11 +1041,105 @@ function clickSaveOrCancel() {
                 taskList.innerHTML = createTaskList(queryTasksByChildCateId(currentCateId));
             }
             //更新详细内容区
+            currentTaskId = curTaskId;
             generateTaskById(curTaskId); //初始化任务详细
         }
     });
     addClickEvent($(".cancel-save"), function() {
         console.log("cancel save");
+        generateTaskById(currentTaskId);
+    });
+}
+
+/**
+ * 点击完成
+ * @return {[type]} [description]
+ */
+function checkTaskDone() {
+    var r = confirm("确定将任务标记为已完成吗？");
+    if (r) {
+
+        console.log(currentTaskId);
+        updateTaskStatusById(currentTaskId); //更新状态
+        listAllStorage();
+        console.log(currentTaskId);
+        generateTaskById(currentTaskId);
+        console.log(currentTaskId);
+        var temp = currentTaskId;
+        //更新任务列表
+        var taskList = $("#task-list");
+        if (currentCateTable === "AllCate") { //如果焦点在所有分类上
+            taskList.innerHTML = createTaskList(queryAllTasks());
+        } else if (currentCateTable === "cate") {
+            taskList.innerHTML = createTaskList(queryTasksByCateId(currentCateId));
+        } else {
+            taskList.innerHTML = createTaskList(queryTasksByChildCateId(currentCateId));
+        }
+
+        currentTaskId = temp;
+    }
+}
+
+/**
+ * 点击修改
+ * @return {[type]} [description]
+ */
+function changeTask() {
+    var task = queryTaskById(currentTaskId);
+    $(".todo-name").innerHTML = '<input type="text" class="input-title" placeholder="请输入标题" value="' + task.name + '">';
+    $(".manipulate").innerHTML = "";
+    $(".task-date span").innerHTML = '<input type="date" class="input-date" value="' + task.date + '">';
+    $(".content").innerHTML = '<textarea class="textarea-content" placeholder="请输入任务内容">' + task.content + '</textarea>';
+    $(".button-area").innerHTML = '<span class="info"></span>                    <button class="save">保存修改</button>                    <button class="cancel-save">放弃</button>';
+    $(".button-area").style.display = "block";
+    changeSaveOrNot();
+}
+
+/**
+ * 保存修改或不修改
+ * @return {[type]} [description]
+ */
+function changeSaveOrNot() {
+    addClickEvent($(".save"), function() {
+
+        var title = $(".input-title");
+        var content = $(".textarea-content");
+        var date = $(".input-date");
+        var info = $(".info");
+
+        if (title.value === "") {
+            info.innerHTML = "标题不能为空";
+        } else if (date.value === "") {
+            info.innerHTML = "日期不能为空";
+        } else if (content.value === "") {
+            info.innerHTML = "内容不能为空";
+        } else {
+            /*var taskObject = {};
+            taskObject.finish = false;
+            taskObject.name = title.value;
+            taskObject.content = content.value;
+            taskObject.date = date.value;*/
+            console.log("before save change, check currentTaskId");
+            console.log(currentTaskId);
+            updateTaskById(currentTaskId, title.value, date.value, content.value);
+            generateTaskById(currentTaskId);
+            console.log(currentTaskId);
+            var temp = currentTaskId;
+            //更新任务列表
+            var taskList = $("#task-list");
+            if (currentCateTable === "AllCate") { //如果焦点在所有分类上
+                taskList.innerHTML = createTaskList(queryAllTasks());
+            } else if (currentCateTable === "cate") {
+                taskList.innerHTML = createTaskList(queryTasksByCateId(currentCateId));
+            } else {
+                taskList.innerHTML = createTaskList(queryTasksByChildCateId(currentCateId));
+            }
+
+            currentTaskId = temp;
+        }
+    });
+
+    addClickEvent($(".cancel-save"), function() {
         generateTaskById(currentTaskId);
     });
 }
