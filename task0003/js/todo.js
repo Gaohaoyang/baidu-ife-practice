@@ -56,7 +56,7 @@ function initDataBase() {
         }, {
             "id": 2,
             "name": "生活",
-            "child": []
+            "child": [3]
         }];
 
         var childCateJson = [{
@@ -74,7 +74,12 @@ function initDataBase() {
             "pid": 1,
             "name": "服务端",
             "child": [3],
-        }, ];
+        }, ,{
+            "id": 3,
+            "pid": 2,
+            "name": "吃饭",
+            "child": [],
+        }];
 
         var taskJson = [{
             "id": -1,
