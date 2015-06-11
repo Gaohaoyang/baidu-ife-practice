@@ -53,6 +53,10 @@ function initDataBase() {
             "id": 1,
             "name": "工作",
             "child": [1, 2]
+        }, {
+            "id": 2,
+            "name": "生活",
+            "child": []
         }];
 
         var childCateJson = [{
@@ -69,7 +73,7 @@ function initDataBase() {
             "id": 2,
             "pid": 1,
             "name": "服务端",
-            "child": [3, 4],
+            "child": [3],
         }, ];
 
         var taskJson = [{
@@ -78,7 +82,7 @@ function initDataBase() {
             "finish": true,
             "name": "使用说明",
             "date": "2015-06-05",
-            "content": "左侧为分类列表\n中间为当前分类下的任务列表\n右侧为任务详情",
+            "content": "本应用为离线应用，数据将存储在本地硬盘<br><br>左侧为分类列表<br>中间为当前分类下的任务列表<br>右侧为任务详情<br><br>可以添加删除分类，添加任务，修改任务，以及给任务标记是否完成等功能<br><br>by <a target='_blank' href='http://gaohaoyang.github.io'>Gaohaoyang</a>",
         }, {
             "id": 0,
             "pid": 1,
@@ -104,16 +108,9 @@ function initDataBase() {
             "id": 3,
             "pid": 2,
             "finish": false,
-            "name": "tomcat",
-            "date": "2015-05-31",
-            "content": "服务器搭建",
-        }, {
-            "id": 4,
-            "pid": 2,
-            "finish": false,
-            "name": "运维",
-            "date": "2015-05-31",
-            "content": "数据库备份",
+            "name": "drools",
+            "date": "2015-06-31",
+            "content": "研究drools推理引擎",
         }];
 
         // DataBase init
