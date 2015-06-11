@@ -6,7 +6,7 @@ var currentTaskId = -1; //当前任务 id
 initAll();
 
 function initAll() {
-    localStorage.clear();
+    // localStorage.clear();
     initDataBase(); //初始化数据表
     initCates(); //初始化分类
     initModal(); //初始化模态框
