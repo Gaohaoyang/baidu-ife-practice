@@ -46,10 +46,11 @@ function initDataBase() {
     if (!localStorage.cate || !localStorage.childCate || !localStorage.task) {
 
         var cateJson = [{
-            "id": 0,
-            "name": "默认分类",
-            "child": [0]
-        }, {
+                "id": 0,
+                "name": "默认分类",
+                "child": [0]
+            }
+            /*, {
             "id": 1,
             "name": "工作",
             "child": [1, 2]
@@ -57,14 +58,16 @@ function initDataBase() {
             "id": 2,
             "name": "生活",
             "child": [3]
-        }];
+        }*/
+        ];
 
         var childCateJson = [{
-            "id": 0,
-            "pid": 0,
-            "name": "默认子分类",
-            "child": [-1],
-        }, {
+                "id": 0,
+                "pid": 0,
+                "name": "默认子分类",
+                "child": [-1],
+            }
+            /*, {
             "id": 1,
             "pid": 1,
             "name": "前端",
@@ -74,21 +77,23 @@ function initDataBase() {
             "pid": 1,
             "name": "服务端",
             "child": [3],
-        }, ,{
+        }, {
             "id": 3,
             "pid": 2,
             "name": "吃饭",
             "child": [],
-        }];
+        }*/
+        ];
 
         var taskJson = [{
-            "id": -1,
-            "pid": 0,
-            "finish": true,
-            "name": "使用说明",
-            "date": "2015-06-05",
-            "content": "本应用为离线应用，数据将存储在本地硬盘<br><br>左侧为分类列表<br>中间为当前分类下的任务列表<br>右侧为任务详情<br><br>可以添加删除分类，添加任务，修改任务，以及给任务标记是否完成等功能<br><br>by <a target='_blank' href='http://gaohaoyang.github.io'>Gaohaoyang</a>",
-        }, {
+                "id": -1,
+                "pid": 0,
+                "finish": true,
+                "name": "使用说明",
+                "date": "2015-06-05",
+                "content": "本应用为离线应用，数据将存储在本地硬盘<br><br>左侧为分类列表<br>中间为当前分类下的任务列表<br>右侧为任务详情<br><br>可以添加删除分类，添加任务，修改任务，以及给任务标记是否完成等功能<br><br>by <a target='_blank' href='http://gaohaoyang.github.io'>Gaohaoyang</a>",
+            }
+            /*, {
             "id": 0,
             "pid": 1,
             "finish": true,
@@ -116,7 +121,8 @@ function initDataBase() {
             "name": "drools",
             "date": "2015-06-31",
             "content": "研究drools推理引擎",
-        }];
+        }*/
+        ];
 
         // DataBase init
         localStorage.cate = JSON.stringify(cateJson);
@@ -859,7 +865,8 @@ function createDateData(taskArr) {
     console.log(dateArr);
     console.log(taskArr);
 
-    //对日期排序，待解决！！！！
+    //对日期排序
+    dateArr = dateArr.sort();
 
     //根据时间查找任务对象
     for (var j = 0; j < dateArr.length; j++) {
@@ -982,13 +989,23 @@ function cleanTasksHighLight() {
 function clickAddTask() {
     console.log("clickAddTask");
     // $(".right").innerHTML = '';
-    $(".todo-name").innerHTML = '<input type="text" class="input-title" placeholder="请输入标题">';
-    $(".manipulate").innerHTML = "";
-    $(".task-date span").innerHTML = '<input type="date" class="input-date">';
-    $(".content").innerHTML = '<textarea class="textarea-content" placeholder="请输入任务内容"></textarea>';
-    $(".button-area").innerHTML = '<span class="info"></span>                    <button class="save">保存</button>                    <button class="cancel-save">放弃</button>';
-    $(".button-area").style.display = "block";
-    clickSaveOrCancel();
+
+    // 如果当前的主分类没有子分类，提示先建立子分类
+    // if (currentCateId != -1) {
+
+    // }
+    // var cateChild = queryCateById(currentCateId).child;
+    if (currentCateId != -1 && currentCateTable == "cate" && queryCateById(currentCateId).child.length === 0) {
+        alert("请先建立子分类");
+    } else {
+        $(".todo-name").innerHTML = '<input type="text" class="input-title" placeholder="请输入标题">';
+        $(".manipulate").innerHTML = "";
+        $(".task-date span").innerHTML = '<input type="date" class="input-date">';
+        $(".content").innerHTML = '<textarea class="textarea-content" placeholder="请输入任务内容"></textarea>';
+        $(".button-area").innerHTML = '<span class="info"></span>                    <button class="save">保存</button>                    <button class="cancel-save">放弃</button>';
+        $(".button-area").style.display = "block";
+        clickSaveOrCancel();
+    }
 }
 
 /**
